@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Sunshine-Version-Julio</string>
+    <string name="title_detail_activity">Detail Activity</string>
+    <string name="large_text"></string>
+    <string name="detail_fragment_key">NUEVA_ACTIVIDAD</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_refresh">Refresh</string>
+    <string name="cadenaTextView">Hoy - Soleado - 88 / 63</string>
+
+    <!-- pref_location_key -->
+    <string name="pref_location_key" translatable="false">location_key</string>
+    <!-- pref_location_label -->
+    <string name="pref_location_label">Localidad</string>
+    <!-- pref_location_city -->
+    <string name="pref_location_default" translatable="false">Maracaibo</string>
+
+
+</resources>
