@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.Preference;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,10 +30,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -54,6 +52,31 @@ public class ForecastFragment extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        updateWeather();
+    }
+
+    public void updateWeather() {
+        String city = PreferenceManager.getDefaultSharedPreferences(getContext()).getString(
+                getString(R.string.pref_location_key),
+                getString(R.string.pref_location_default)
+        );
+        FetchWeatherTask task = new FetchWeatherTask();
+        task.execute(city);
+        if (getView() != null){
+            TextView textView = (TextView) getView().findViewById(R.id.mainTextView);
+            String horaActual = new SimpleDateFormat("h:mm a").format(
+                    Calendar.getInstance(
+                            TimeZone.getTimeZone("America/Caracas"),
+                            new Locale("es-ES")
+                    ).getTime()
+            );
+            textView.setText(city + ", " + horaActual);
+        }
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.forecast_fragment, menu);
@@ -62,10 +85,8 @@ public class ForecastFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        String city = getString(R.string.pref_location_default);
         if (id == R.id.action_refresh) {
-            FetchWeatherTask task = new FetchWeatherTask();
-            task.execute(city);
+            updateWeather();
             return true;
         }
         if (id == R.id.action_settings) {
@@ -78,33 +99,12 @@ public class ForecastFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        String[] listaItems = new String[]{
-                "Pronostico 1",
-                "Pronostico 2",
-                "Pronostico 3",
-                "Pronostico 4",
-                "Pronostico 5",
-                "Pronostico 6",
-                "Pronostico 7",
-                "Pronostico 8"
-        };
-        List<String> weekForecast = new ArrayList<String>(Arrays.asList(listaItems));
-        adaptador = new ArrayAdapter<String>(getActivity(),
+        adaptador = new ArrayAdapter<>(getActivity(),
                 R.layout.list_item_forecast,
                 R.id.list_item_forecast_textview,
-                weekForecast);
+                new ArrayList<String>());
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        TextView textView = (TextView) rootView.findViewById(R.id.mainTextView);
-
-        String citySetting = getP
-        String horaActual = new SimpleDateFormat("h:mm a").format(
-                Calendar.getInstance(
-                        TimeZone.getTimeZone("America/Caracas"),
-                        new Locale("es-ES")
-                ).getTime()
-        );
-        textView.setText(citySetting + ", " + horaActual);
         ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
         listView.setAdapter(adaptador);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
