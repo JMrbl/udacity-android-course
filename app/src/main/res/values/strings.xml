@@ -7,12 +7,16 @@
     <string name="action_refresh">Refresh</string>
     <string name="cadenaTextView">Hoy - Soleado - 88 / 63</string>
 
-    <!-- pref_location_key -->
+    <!-- Location Preferences __________________________________________________________________ -->
     <string name="pref_location_key" translatable="false">location_key</string>
-    <!-- pref_location_label -->
     <string name="pref_location_label">Localidad</string>
-    <!-- pref_location_city -->
     <string name="pref_location_default" translatable="false">Maracaibo</string>
 
+    <!-- Metric Preferences ____________________________________________________________________ -->
+    <string name="pref_tempUnit_key" translatable="false">metric_key</string>
+    <string name="pref_tempUnit_label">Unidades</string>
+    <string name="pref_tempUnit_default" translatable="false">metric</string>
+    <string name="pref_tempUnit_celsius" translatable="false">metric</string>
+    <string name="pref_tempUnit_fahrenheit" translatable="false">imperial</string>
 
 </resources>

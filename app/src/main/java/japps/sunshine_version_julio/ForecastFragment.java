@@ -62,8 +62,12 @@ public class ForecastFragment extends Fragment {
                 getString(R.string.pref_location_key),
                 getString(R.string.pref_location_default)
         );
+        String tempUnit = PreferenceManager.getDefaultSharedPreferences(getContext()).getString(
+                getString(R.string.pref_tempUnit_key),
+                getString(R.string.pref_tempUnit_default)
+        );
         FetchWeatherTask task = new FetchWeatherTask();
-        task.execute(city);
+        task.execute(city, tempUnit);
         if (getView() != null){
             TextView textView = (TextView) getView().findViewById(R.id.mainTextView);
             String horaActual = new SimpleDateFormat("h:mm a").format(
@@ -141,18 +145,17 @@ public class ForecastFragment extends Fragment {
                 // http://openweathermap.org/API#forecast
 
                 final String BASE_URL = "http://api.openweathermap.org/data/2.5/forecast/find";
-                final String LATITUDE_PARAM = "lat";
-                final String LONGITUDE_PARAM = "lon";
                 final String CITY_PARAM = "q";
                 final String UNITS_PARAM = "units";
                 final String DAYS_PARAM = "cnt";
                 final String APPID_PARAM = "APPID";
-                String units = "metric";
+                String city = params[0];
+                String units = params[1];
                 int fromDays = 12;
                 String apiKey = BuildConfig.OPEN_WEATHER_MAP_API_KEY;
 
                 Uri buildUrl = Uri.parse(BASE_URL).buildUpon()
-                        .appendQueryParameter(CITY_PARAM, params[0])
+                        .appendQueryParameter(CITY_PARAM, city)
                         .appendQueryParameter(UNITS_PARAM, units)
                         .appendQueryParameter(DAYS_PARAM, String.valueOf(fromDays))
                         .appendQueryParameter(APPID_PARAM, apiKey)
@@ -188,11 +191,11 @@ public class ForecastFragment extends Fragment {
                 }
                 forecastJsonStr = buffer.toString();
                 try {
-                    JSONObject jsonObject = new JSONObject(forecastJsonStr);
+//                    JSONObject jsonObject = new JSONObject(forecastJsonStr);
                     forecast = getWeatherDataFromJson(forecastJsonStr, fromDays);
 
-                    String jsonParsed = jsonObject.toString(4);
-                    Log.d("JSON WEATHER OUTPUT", jsonParsed);
+//                    String jsonParsed = jsonObject.toString(4);
+//                    Log.d("JSON WEATHER OUTPUT", jsonParsed);
                 } catch (JSONException jsonEx) {
                     Log.e(LOG_TAG, "JSON_Error ", jsonEx);
                 }
