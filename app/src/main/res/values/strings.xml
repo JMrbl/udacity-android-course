@@ -5,10 +5,12 @@
     <string name="title_detail_activity">Detalles</string>
     <string name="title_action_settings">Opciones</string>
     <string name="title_action_refresh">Refrescar</string>
+    <string name="title_action_share">Compartir</string>
     <string name="title_action_map">Ubicar en Mapa</string>
 
     <!-- Some Keys _____________________________________________________________________________ -->
     <string name="detail_fragment_key">NUEVA_ACTIVIDAD</string>
+    <string name="share_key">SHARE_ACTION</string>
 
     <!-- Location Preferences __________________________________________________________________ -->
     <string name="pref_location_key" translatable="false">LOCATION_KEY</string>

@@ -6,11 +6,16 @@ package japps.sunshine_version_julio;
 
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.ShareActionProvider;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,9 +56,13 @@ public class DetailActivity extends AppCompatActivity {
 
     public static class DetailFragment extends Fragment {
 
+        private ShareActionProvider shareActionProvider;
+        private final String HASH_TAG = " #SunshineApp";
+        private final String LOG_TAG = DetailActivity.class.getSimpleName();
+        private String forecastValue;
 
-        public String getValor() {
-            return getArguments().getString(getString(R.string.detail_fragment_key));
+        public DetailFragment() {
+            setHasOptionsMenu(true);
         }
 
         @Override
@@ -62,14 +71,45 @@ public class DetailActivity extends AppCompatActivity {
             if (container == null) {
                 return null;
             }
-            String forecast = getValor();
+            forecastValue = getValor();
             View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
             TextView textView = (TextView) rootView.findViewById(R.id.newActivityText);
             textView.setTextSize(30);
-            textView.setText(forecast);
+            textView.setText(forecastValue);
 
             return rootView;
+        }
+
+        @Override
+        public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+
+            inflater.inflate(R.menu.fragment_share, menu);
+            MenuItem menuItem = menu.findItem(R.id.action_share);
+            shareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
+
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+            } else {
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+            }
+            intent.setType("text/plain");
+            intent.putExtra(Intent.EXTRA_TEXT, forecastValue + HASH_TAG);
+            setShareIntent(intent);
+            super.onCreateOptionsMenu(menu, inflater);
+        }
+
+        public String getValor() {
+            return getArguments().getString(getString(R.string.detail_fragment_key));
+        }
+
+        private void setShareIntent(Intent intent) {
+            if (shareActionProvider != null) {
+                shareActionProvider.setShareIntent(intent);
+            } else {
+                Log.d(LOG_TAG, "Share Action Provider is null?");
+            }
         }
     }
 
