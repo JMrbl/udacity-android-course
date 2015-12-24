@@ -8,9 +8,6 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -68,7 +65,7 @@ public class ForecastFragment extends Fragment {
         );
         FetchWeatherTask task = new FetchWeatherTask();
         task.execute(city, tempUnit);
-        if (getView() != null){
+        if (getView() != null) {
             TextView textView = (TextView) getView().findViewById(R.id.mainTextView);
             String horaActual = new SimpleDateFormat("h:mm a").format(
                     Calendar.getInstance(
@@ -78,26 +75,6 @@ public class ForecastFragment extends Fragment {
             );
             textView.setText(city + ", " + horaActual);
         }
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.forecast_fragment, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_refresh) {
-            updateWeather();
-            return true;
-        }
-        if (id == R.id.action_settings) {
-            Intent intent = new Intent(getActivity(), SettingsActivity.class);
-            startActivity(intent);
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -191,11 +168,10 @@ public class ForecastFragment extends Fragment {
                 }
                 forecastJsonStr = buffer.toString();
                 try {
-//                    JSONObject jsonObject = new JSONObject(forecastJsonStr);
                     forecast = getWeatherDataFromJson(forecastJsonStr, fromDays);
-
-//                    String jsonParsed = jsonObject.toString(4);
-//                    Log.d("JSON WEATHER OUTPUT", jsonParsed);
+                    JSONObject jsonObject = new JSONObject(forecastJsonStr);
+                    String jsonParsed = jsonObject.toString(4);
+                    Log.d("JSON WEATHER OUTPUT", jsonParsed);
                 } catch (JSONException jsonEx) {
                     Log.e(LOG_TAG, "JSON_Error ", jsonEx);
                 }
