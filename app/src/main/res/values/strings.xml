@@ -11,6 +11,7 @@
     <!-- Some Keys _____________________________________________________________________________ -->
     <string name="detail_fragment_key">NUEVA_ACTIVIDAD</string>
     <string name="share_key">SHARE_ACTION</string>
+    <string name="api_key">cbcf4d7b9f98970213d72a3b20d02e09</string>
 
     <!-- Location Preferences __________________________________________________________________ -->
     <string name="pref_location_key" translatable="false">LOCATION_KEY</string>

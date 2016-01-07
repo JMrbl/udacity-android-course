@@ -129,7 +129,7 @@ public class ForecastFragment extends Fragment {
                 String city = params[0];
                 String units = params[1];
                 int fromDays = 12;
-                String apiKey = BuildConfig.OPEN_WEATHER_MAP_API_KEY;
+                String apiKey = getString(R.string.api_key);
 
                 Uri buildUrl = Uri.parse(BASE_URL).buildUpon()
                         .appendQueryParameter(CITY_PARAM, city)
