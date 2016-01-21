@@ -6,9 +6,14 @@ package japps.sunshine_version_julio;
 
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ShareActionProvider;
@@ -29,10 +34,8 @@ public class DetailActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_detail);
         if (savedInstanceState == null) {
-            DetailFragment df = new DetailFragment();
-            df.setArguments(getIntent().getExtras());
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, df)
+                    .add(R.id.container, new DetailFragment())
                     .commit();
         }
     }
@@ -54,31 +57,29 @@ public class DetailActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public static class DetailFragment extends Fragment {
+    public static class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
         private ShareActionProvider shareActionProvider;
         private final String HASH_TAG = " #SunshineApp";
         private final String LOG_TAG = DetailActivity.class.getSimpleName();
-        private String forecastValue;
+        private String mForecast;
+        private final int DETAIL_LOADER_ID = 1;
 
         public DetailFragment() {
             setHasOptionsMenu(true);
         }
 
         @Override
+        public void onActivityCreated(Bundle savedInstanceState) {
+            getLoaderManager().initLoader(DETAIL_LOADER_ID, null, this);
+            super.onActivityCreated(savedInstanceState);
+        }
+
+        @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            if (container == null) {
-                return null;
-            }
-            forecastValue = getValor();
-            View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
-
-            TextView textView = (TextView) rootView.findViewById(R.id.newActivityText);
-            textView.setTextSize(30);
-            textView.setText(forecastValue);
-
-            return rootView;
+            if (container == null) {return null;}
+            return inflater.inflate(R.layout.fragment_detail, container, false);
         }
 
         @Override
@@ -87,29 +88,58 @@ public class DetailActivity extends AppCompatActivity {
             inflater.inflate(R.menu.fragment_share, menu);
             MenuItem menuItem = menu.findItem(R.id.action_share);
             shareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
-
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
-            } else {
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+            if (mForecast != null){
+                setShareIntent();
             }
-            intent.setType("text/plain");
-            intent.putExtra(Intent.EXTRA_TEXT, forecastValue + HASH_TAG);
-            setShareIntent(intent);
             super.onCreateOptionsMenu(menu, inflater);
         }
 
-        public String getValor() {
-            return getArguments().getString(getString(R.string.detail_fragment_key));
+        public Uri getUri() {
+            Intent intent = getActivity().getIntent();
+            if (intent != null) {
+                return intent.getData();
+            }
+            return null;
         }
 
-        private void setShareIntent(Intent intent) {
+        private void setShareIntent() {
             if (shareActionProvider != null) {
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+                } else {
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+                }
+                intent.setType("text/plain");
+                intent.putExtra(Intent.EXTRA_TEXT, mForecast + HASH_TAG);
                 shareActionProvider.setShareIntent(intent);
             } else {
                 Log.d(LOG_TAG, "Share Action Provider is null?");
             }
+        }
+
+        @Override
+        public Loader onCreateLoader(int id, Bundle args) {
+            Uri forecastUri = getUri();
+            if (forecastUri == null){return null;}
+            return new CursorLoader(getActivity(),forecastUri,ForecastFragment.FORECAST_COLUMNS,
+                    null,null,null);
+        }
+
+        @Override
+        public void onLoadFinished(Loader loader, Cursor data) {
+            if (!data.moveToFirst()){
+                return;
+            }
+            TextView textView = (TextView) getView().findViewById(R.id.newActivityText);
+            mForecast = Utility.convertCursorRowToUXFormat(getActivity(),data);
+            textView.setText(mForecast);
+            textView.setTextSize(30);
+            setShareIntent();
+        }
+
+        @Override
+        public void onLoaderReset(Loader loader) {
         }
     }
 

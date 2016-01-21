@@ -4,7 +4,6 @@ package japps.sunshine_version_julio;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -12,13 +11,16 @@ import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity {
 
+    private String mLocationCity;
+    static final String FORECAST_FRAGMENT_TAG = "FORECAST_FRAGMENT";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
+            mLocationCity = Utility.getPreferredCity(this);
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new ForecastFragment())
+                    .add(R.id.container, new ForecastFragment(),FORECAST_FRAGMENT_TAG)
                     .commit();
         }
     }
@@ -28,6 +30,17 @@ public class MainActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        String locationCity = Utility.getPreferredCity(this);
+        if (!locationCity.equals(mLocationCity)){
+            ForecastFragment ff = (ForecastFragment)getSupportFragmentManager().findFragmentByTag(FORECAST_FRAGMENT_TAG);
+            ff.onLocationChange();
+            mLocationCity = locationCity;
+        }
     }
 
     @Override
@@ -46,10 +59,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void showMap() {
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        String city = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getString(
-                getString(R.string.pref_location_key),
-                getString(R.string.pref_location_default)
-        );
+        String city = Utility.getPreferredLocationSetting(this);
         intent.setData(Uri.parse(String.format("geo:0,0?q=%s", city)));
         if (intent.resolveActivity(getPackageManager()) != null) {
             startActivity(intent);
