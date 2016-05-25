@@ -39,6 +39,50 @@ public class Utility {
     // back into date objects for comparison/processing.
     public static final String DATE_FORMAT = "yyyyMMdd";
 
+    public static String getFormattedWind(Context context, float windSpeed, float degrees) {
+        int windFormat;
+        if (Utility.isMetric(context)) {
+            windFormat = R.string.format_wind_kmh;
+        } else {
+            windFormat = R.string.format_wind_mph;
+            windSpeed = .621371192237334f * windSpeed;
+        }
+
+        // From wind direction in degrees, determine compass direction as a string (e.g NW)
+        // You know what's fun, writing really long if/else statements with tons of possible
+        // conditions.  Seriously, try it!
+//        String direction = getWindDirection(degrees);
+        String direction = "Unknown";
+        if (degrees < 22.5 && degrees >= 0.0) {
+            direction = "N";
+        } else if (degrees < 67.5) {
+            direction = "NE";
+        } else if (degrees < 112.5) {
+            direction = "E";
+        } else if (degrees < 157.5) {
+            direction = "SE";
+        } else if (degrees < 202.5) {
+            direction = "S";
+        } else if (degrees < 247.5) {
+            direction = "SW";
+        } else if (degrees < 292.5) {
+            direction = "W";
+        } else if (degrees < 337.5) {
+            direction = "NW";
+        } else if (degrees <=360.0 ){
+            direction = "N";
+        }
+        return String.format(context.getString(windFormat), windSpeed, direction);
+    }
+
+    private static String getWindDirection(float degrees) {
+        final String[] directionsText = { "N", "NE", "E", "SE", "S", "SW", "W", "NW" };
+        final int DEGREES_TOTAL = 360;
+        final int DIR_TOTAL = 8;
+        int val = Math.round(Math.abs(degrees) / (DEGREES_TOTAL / DIR_TOTAL)) % DIR_TOTAL;
+        return directionsText[val];
+    }
+
     /**
      * Helper method to convert the database representation of the date into something to display
      * to users.  As classy and polished a user experience as "20140102" is, we can do better.
@@ -76,7 +120,7 @@ public class Utility {
         } else {
             // Otherwise, use the form "Mon Jun 3"
             SimpleDateFormat shortenedDateFormat = new SimpleDateFormat("EEE MMM dd");
-            return shortenedDateFormat.format(dateInMillis);
+            return capitalize(shortenedDateFormat.format(dateInMillis));
         }
     }
 
@@ -105,7 +149,7 @@ public class Utility {
             time.setToNow();
             // Otherwise, the format is just the day of the week (e.g "Wednesday".
             SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE");
-            return Utility.capitalize(dayFormat.format(dateInMillis));
+            return capitalize(dayFormat.format(dateInMillis));
         }
     }
 
@@ -116,13 +160,13 @@ public class Utility {
      *                in Utility.DATE_FORMAT
      * @return The day in the form of a string formatted "December 6"
      */
-    private static String getFormattedMonthDay(Context context, long dateInMillis ) {
+    public static String getFormattedMonthDay(Context context, long dateInMillis ) {
         Time time = new Time();
         time.setToNow();
         SimpleDateFormat dbDateFormat = new SimpleDateFormat(Utility.DATE_FORMAT);
         SimpleDateFormat monthDayFormat = new SimpleDateFormat("MMMM dd");
         String monthDayString = monthDayFormat.format(dateInMillis);
-        return monthDayString;
+        return capitalize(monthDayString);
     }
 
     public static String getPreferredLocationSetting(Context context) {
