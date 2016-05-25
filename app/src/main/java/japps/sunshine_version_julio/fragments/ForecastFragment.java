@@ -1,4 +1,4 @@
-package japps.sunshine_version_julio;
+package japps.sunshine_version_julio.fragments;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -20,7 +20,12 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import japps.sunshine_version_julio.adapters.ForecastAdapter;
+import japps.sunshine_version_julio.R;
+import japps.sunshine_version_julio.activities.DetailActivity;
 import japps.sunshine_version_julio.data.WeatherContract;
+import japps.sunshine_version_julio.tasks.FetchWeatherTask;
+import japps.sunshine_version_julio.utils.Utility;
 
 ;
 
@@ -33,7 +38,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     private final int FORECAST_LOADER_ID = 0;
     private final String LOG_TAG = ForecastFragment.class.getSimpleName();
 
-    static final String[] FORECAST_COLUMNS = {
+    public static final String[] FORECAST_COLUMNS = {
             // In this case the id needs to be fully qualified with a table name, since
             // the content provider joins the location & weather tables in the background
             // (both have an _id column)
@@ -53,15 +58,15 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     // These indices are tied to FORECAST_COLUMNS.  If FORECAST_COLUMNS changes, these
     // must change.
-    static final int COL_WEATHER_ID = 0;
-    static final int COL_WEATHER_DATE = 1;
-    static final int COL_WEATHER_DESC = 2;
-    static final int COL_WEATHER_MAX_TEMP = 3;
-    static final int COL_WEATHER_MIN_TEMP = 4;
-    static final int COL_LOCATION_SETTING = 5;
-    static final int COL_WEATHER_CONDITION_ID = 6;
-    static final int COL_COORD_LAT = 7;
-    static final int COL_COORD_LONG = 8;
+    public static final int COL_WEATHER_ID = 0;
+    public static final int COL_WEATHER_DATE = 1;
+    public static final int COL_WEATHER_DESC = 2;
+    public static final int COL_WEATHER_MAX_TEMP = 3;
+    public static final int COL_WEATHER_MIN_TEMP = 4;
+    public static final int COL_LOCATION_SETTING = 5;
+    public static final int COL_WEATHER_CONDITION_ID = 6;
+    public static final int COL_COORD_LAT = 7;
+    public static final int COL_COORD_LONG = 8;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

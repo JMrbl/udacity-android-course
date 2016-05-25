@@ -1,10 +1,12 @@
-package japps.sunshine_version_julio;
+package japps.sunshine_version_julio.activities;
 
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+
+import japps.sunshine_version_julio.R;
 
 /**
  * Created by Julio on 13/12/2015.

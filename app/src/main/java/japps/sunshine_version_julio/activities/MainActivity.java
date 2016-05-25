@@ -1,4 +1,4 @@
-package japps.sunshine_version_julio;
+package japps.sunshine_version_julio.activities;
 
 
 import android.content.Intent;
@@ -8,6 +8,10 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import japps.sunshine_version_julio.fragments.ForecastFragment;
+import japps.sunshine_version_julio.R;
+import japps.sunshine_version_julio.utils.Utility;
 
 public class MainActivity extends AppCompatActivity {
 

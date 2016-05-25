@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package japps.sunshine_version_julio;
+package japps.sunshine_version_julio.tasks;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -39,6 +39,8 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Vector;
 
+import japps.sunshine_version_julio.BuildConfig;
+import japps.sunshine_version_julio.R;
 import japps.sunshine_version_julio.data.WeatherContract.LocationEntry;
 import japps.sunshine_version_julio.data.WeatherContract.WeatherEntry;
 
@@ -153,7 +155,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
      * @param lon             the longitude of the city
      * @return the row ID of the added location.
      */
-    long addLocation(String locationSetting, String cityName, double lat, double lon) {
+    public long addLocation(String locationSetting, String cityName, double lat, double lon) {
         // Students: First, check if the location with this city name exists in the db
         // If it exists, return the current ID
         // Otherwise, insert it using the content resolver and the base URI

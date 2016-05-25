@@ -1,4 +1,4 @@
-package japps.sunshine_version_julio;
+package japps.sunshine_version_julio.activities;
 
 /**
  * Created by Julio on 13-11-2015.
@@ -25,6 +25,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import japps.sunshine_version_julio.fragments.ForecastFragment;
+import japps.sunshine_version_julio.R;
+import japps.sunshine_version_julio.utils.Utility;
 
 public class DetailActivity extends AppCompatActivity {
 
@@ -122,7 +126,7 @@ public class DetailActivity extends AppCompatActivity {
         public Loader onCreateLoader(int id, Bundle args) {
             Uri forecastUri = getUri();
             if (forecastUri == null){return null;}
-            return new CursorLoader(getActivity(),forecastUri,ForecastFragment.FORECAST_COLUMNS,
+            return new CursorLoader(getActivity(),forecastUri, ForecastFragment.FORECAST_COLUMNS,
                     null,null,null);
         }
 
