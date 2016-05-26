@@ -141,14 +141,11 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         if (!data.moveToFirst()) {
             return;
         }
-//        TextView textView = (TextView) getView().findViewById(R.id.newActivityText);
-//        mForecast = Utility.convertCursorRowToUXFormat(getActivity(),data);
-//        textView.setText(mForecast);
-//        textView.setTextSize(30);
+        int weatherId = data.getInt(COL_WEATHER_CONDITION_ID);
         ViewHolder holder = (ViewHolder) getView().getTag();
 
         // Set weather image
-        holder.iconView.setImageResource(R.mipmap.weather_icon);
+        holder.iconView.setImageResource(Utility.getArtResourceForWeatherCondition(weatherId));
 
         // Set date from data
         long dateMillis = data.getLong(COL_WEATHER_DATE);
@@ -209,7 +206,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             descriptionView = (TextView) view.findViewById(R.id.detail_forecast_textview);
             highTempView = (TextView) view.findViewById(R.id.detail_high_textview);
             lowTempView = (TextView) view.findViewById(R.id.detail_low_textview);
-            humidity = (TextView) view.findViewById(R.id.detail_himidity_textview);
+            humidity = (TextView) view.findViewById(R.id.detail_humidity_textview);
             wind = (TextView) view.findViewById(R.id.detail_wind_textview);
             pressure = (TextView) view.findViewById(R.id.detail_pressure_textview);
         }

@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void showMap() {
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        String city = Utility.getPreferredLocationSetting(this);
+        String city = Utility.getPreferredCity(this);
         intent.setData(Uri.parse(String.format("geo:0,0?q=%s", city)));
         if (intent.resolveActivity(getPackageManager()) != null) {
             startActivity(intent);

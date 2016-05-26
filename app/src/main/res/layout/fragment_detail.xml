@@ -1,92 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
+    android:layout_height="match_parent"
     android:padding="10dp">
 
-    <!-- Top lineal layout (Horizontal) -->
+    <!-- Main linear layout (Vertical) -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
-        <!-- Left inner linear layout (Vertical) -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="10dp"
-            android:layout_weight="1">
-
-            <TextView
-                android:id="@+id/detail_day_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="30sp" />
-
-            <TextView
-                android:id="@+id/detail_date_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="30sp" />
-
-            <TextView
-                android:id="@+id/detail_high_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="30sp" />
-
-            <TextView
-                android:id="@+id/detail_low_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="30sp" />
-
-        </LinearLayout>
-
-        <!-- Right inner linear layout (Vertical) -->
+        <!-- Top inner lineal layout (Horizontal) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:orientation="vertical"
-            android:padding="10dp">
+            android:orientation="horizontal">
 
-            // Weather icon view
-            <ImageView
-                android:id="@+id/detail_forecast_icon"
-                android:layout_width="wrap_content"
+            <!-- Left inner linear layout (Vertical) -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center" />
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:padding="10dp">
 
-            <TextView
-                android:id="@+id/detail_forecast_textview"
-                android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/detail_day_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="30sp" />
+
+                <TextView
+                    android:id="@+id/detail_date_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="30sp" />
+
+                <TextView
+                    android:id="@+id/detail_high_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="30sp" />
+
+                <TextView
+                    android:id="@+id/detail_low_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="30sp" />
+
+            </LinearLayout>
+
+            <!-- Right inner linear layout (Vertical) -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:textSize="30sp" />
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                // Weather icon view
+
+                <ImageView
+                    android:id="@+id/detail_forecast_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center" />
+
+                <TextView
+                    android:id="@+id/detail_forecast_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textSize="30sp" />
+            </LinearLayout>
+
         </LinearLayout>
 
-
-    </LinearLayout>
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:paddingTop="15dp">
-        <!-- Bottom lineal layout (Vertical) -->
+        <!-- Bottom inner lineal layout (Vertical) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_marginTop="50dp">
 
             <TextView
-                android:id="@+id/detail_himidity_textview"
+                android:id="@+id/detail_humidity_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="30sp" />
@@ -105,12 +106,13 @@
 
 
         </LinearLayout>
-    </ScrollView>
 
-    <!--<TextView-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:id="@+id/newActivityText"-->
-    <!--android:layout_gravity="center"-->
-    <!--android:textAlignment="center" />-->
-</LinearLayout>
+
+        <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/newActivityText"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:textAlignment="center" />-->
+    </LinearLayout>
+</ScrollView>
