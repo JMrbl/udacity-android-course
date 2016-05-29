@@ -1,6 +1,5 @@
 package japps.sunshine_version_julio.fragments;
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,9 +19,8 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import japps.sunshine_version_julio.adapters.ForecastAdapter;
 import japps.sunshine_version_julio.R;
-import japps.sunshine_version_julio.activities.DetailActivity;
+import japps.sunshine_version_julio.adapters.ForecastAdapter;
 import japps.sunshine_version_julio.data.WeatherContract;
 import japps.sunshine_version_julio.tasks.FetchWeatherTask;
 import japps.sunshine_version_julio.utils.Utility;
@@ -33,6 +31,18 @@ import japps.sunshine_version_julio.utils.Utility;
  * Created by Julio on 21/10/2015.
  */
 public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+
+    /**
+     * A callback interface that all activities containing this fragment must
+     * implement. This mechanism allows activities to be notified of item
+     * selections.
+     */
+    public interface Callback {
+        /**
+         * DetailFragmentCallback for when an item has been selected.
+         */
+        void onItemSelected(Uri dateUri);
+    }
 
     private ForecastAdapter mAdapter;
     private final int FORECAST_LOADER_ID = 0;
@@ -80,15 +90,15 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         setCityTimeTextView();
     }
 
-    public void onLocationChange(){
+    public void onLocationChanged() {
         updateWeather();
     }
 
-    public void restartLoader(){
-        getLoaderManager().restartLoader(FORECAST_LOADER_ID, null,this);
+    public void restartLoader() {
+        getLoaderManager().restartLoader(FORECAST_LOADER_ID, null, this);
     }
 
-    public void setCityTimeTextView(){
+    public void setCityTimeTextView() {
         if (getView() != null) {
             TextView textView = (TextView) getView().findViewById(R.id.mainTextView);
             String city = Utility.getPreferredCity(getActivity());
@@ -105,7 +115,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     public void updateWeather() {
         String city = Utility.getPreferredCity(getActivity());
         String tempUnit = Utility.getPreferredTempUnit(getActivity());
-        FetchWeatherTask task = new FetchWeatherTask(getActivity()){
+        FetchWeatherTask task = new FetchWeatherTask(getActivity()) {
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
@@ -133,11 +143,10 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                 Cursor cursor = (Cursor) parent.getItemAtPosition(position);
                 if (cursor != null) {
                     String locationSetting = Utility.getPreferredLocationSetting(getActivity());
-                    Intent detailActivity = new Intent(getActivity(), DetailActivity.class);
-                    detailActivity.setData(WeatherContract.WeatherEntry.buildWeatherLocationWithDate(
-                            locationSetting, cursor.getLong(COL_WEATHER_DATE)
-                    ));
-                    startActivity(detailActivity);
+                    ((Callback) getActivity()).onItemSelected(WeatherContract.WeatherEntry
+                            .buildWeatherLocationWithDate(locationSetting,
+                                    cursor.getLong(COL_WEATHER_DATE)
+                            ));
                 }
             }
         });
