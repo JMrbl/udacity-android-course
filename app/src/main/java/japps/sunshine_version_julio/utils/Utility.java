@@ -21,6 +21,7 @@ package japps.sunshine_version_julio.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -38,6 +39,26 @@ public class Utility {
     // Format used for storing dates in the database.  ALso used for converting those strings
     // back into date objects for comparison/processing.
     public static final String DATE_FORMAT = "yyyyMMdd";
+
+    public static String translateForecast(String forecast){
+        if (!getLocale().equals("es")){
+            return forecast;
+        }
+        switch (forecast){
+            case "Clear":{
+                return "Despejado";
+            }
+            case "Clouds":{
+                return "Nublado";
+            }
+            case "Rain":{
+                return "Lluvia";
+            }
+            default:{
+                return forecast;
+            }
+        }
+    }
 
     /**
      * Helper method to provide the icon resource id according to the weather condition id returned
@@ -248,6 +269,10 @@ public class Utility {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getString(context.getString(R.string.pref_location_key),
                 context.getString(R.string.pref_location_default));
+    }
+
+    public static String getLocale(){
+        return Resources.getSystem().getConfiguration().locale.toString().substring(0,2);
     }
 
     public static String getPreferredTempUnit(Context context) {
