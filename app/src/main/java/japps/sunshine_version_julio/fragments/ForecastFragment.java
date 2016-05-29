@@ -136,6 +136,12 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         task.execute(city, tempUnit);
     }
 
+    public void setUseTodayLayout (boolean useTodayLayout){
+        if (mAdapter != null){
+            mAdapter.setUseTodayLayout(useTodayLayout);
+        }
+    }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         getLoaderManager().initLoader(FORECAST_LOADER_ID, null, this);
