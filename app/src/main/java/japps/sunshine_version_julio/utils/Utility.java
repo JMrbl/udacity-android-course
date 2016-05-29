@@ -163,7 +163,7 @@ public class Utility {
         } else if (degrees <=360.0 ){
             direction = "N";
         }
-        return String.format(context.getString(windFormat), windSpeed, direction);
+        return String.format(context.getString(windFormat), windSpeed, direction).trim();
     }
 
     private static String getWindDirection(float degrees) {
@@ -211,7 +211,7 @@ public class Utility {
         } else {
             // Otherwise, use the form "Mon Jun 3"
             SimpleDateFormat shortenedDateFormat = new SimpleDateFormat("EEE MMM dd");
-            return capitalize(shortenedDateFormat.format(dateInMillis));
+            return capitalize(shortenedDateFormat.format(dateInMillis)).trim();
         }
     }
 
@@ -240,7 +240,7 @@ public class Utility {
             time.setToNow();
             // Otherwise, the format is just the day of the week (e.g "Wednesday".
             SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE");
-            return capitalize(dayFormat.format(dateInMillis));
+            return capitalize(dayFormat.format(dateInMillis)).trim();
         }
     }
 
@@ -257,7 +257,7 @@ public class Utility {
         SimpleDateFormat dbDateFormat = new SimpleDateFormat(Utility.DATE_FORMAT);
         SimpleDateFormat monthDayFormat = new SimpleDateFormat("MMMM dd");
         String monthDayString = monthDayFormat.format(dateInMillis);
-        return capitalize(monthDayString);
+        return capitalize(monthDayString).trim();
     }
 
     public static String getPreferredLocationSetting(Context context) {
@@ -295,7 +295,7 @@ public class Utility {
         } else {
             temp = temperature;
         }
-        return context.getString(R.string.format_temperature, temp);
+        return context.getString(R.string.format_temperature, temp).trim();
     }
 
     public static String formatDate(long dateInMillis) {

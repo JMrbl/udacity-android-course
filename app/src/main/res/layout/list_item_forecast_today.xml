@@ -1,39 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center_vertical"
     android:orientation="horizontal"
-    android:padding="10dp"
-    android:background="@drawable/touch_selector">
+    android:background="@color/colorPrimary"
+    android:paddingLeft="65dp"
+    android:paddingTop="10dp"
+    android:paddingRight="10dp"
+    android:paddingBottom="10dp">
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:layout_gravity="center_vertical">
+        android:layout_weight="1">
 
         <TextView
             android:id="@+id/list_item_date_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="25sp"/>
+            android:textSize="22sp"
+            android:fontFamily="sans-serif-condensed"
+            tools:targetApi="jelly_bean"
+            android:textColor="@color/white" />
 
         <TextView
             android:id="@+id/list_item_high_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:textSize="25sp"/>
+            android:textSize="72sp"
+            android:fontFamily="sans-serif-light"
+            tools:targetApi="jelly_bean"
+            android:textColor="@color/white" />
 
         <TextView
             android:id="@+id/list_item_low_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:textSize="25sp"/>
+            android:textSize="36sp"
+            android:fontFamily="sans-serif-light"
+            tools:targetApi="jelly_bean"
+            android:textColor="@color/white" />
     </LinearLayout>
 
     <LinearLayout
@@ -45,14 +54,17 @@
         android:layout_gravity="center_vertical">
         <ImageView
             android:id="@+id/list_item_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:gravity="center_vertical"/>
         <TextView
             android:id="@+id/list_item_forecast_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:textSize="25sp"/>
+            android:textSize="22sp"
+            android:fontFamily="sans-serif-condensed"
+            android:textIsSelectable="false"
+            android:textColor="@color/white" />
     </LinearLayout>
 </LinearLayout>

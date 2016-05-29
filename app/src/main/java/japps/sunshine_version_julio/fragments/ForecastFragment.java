@@ -46,6 +46,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     private ForecastAdapter mAdapter;
     private int mPosition;
+    private boolean mUseTodayLayout;
     private ListView mListView;
     private final int FORECAST_LOADER_ID = 0;
     private final String POSITION_KEY = "POSITION";
@@ -137,6 +138,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     public void setUseTodayLayout (boolean useTodayLayout){
+        mUseTodayLayout = useTodayLayout;
         if (mAdapter != null){
             mAdapter.setUseTodayLayout(useTodayLayout);
         }
@@ -154,6 +156,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             mPosition = savedInstanceState.getInt(POSITION_KEY);
         }
         mAdapter = new ForecastAdapter(getActivity(), null, 0);
+        mAdapter.setUseTodayLayout(mUseTodayLayout);
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         mListView = (ListView) rootView.findViewById(R.id.listview_forecast);
         mListView.setAdapter(mAdapter);
