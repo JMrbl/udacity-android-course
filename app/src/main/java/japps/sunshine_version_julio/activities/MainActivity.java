@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import japps.sunshine_version_julio.R;
 import japps.sunshine_version_julio.fragments.DetailFragment;
 import japps.sunshine_version_julio.fragments.ForecastFragment;
+import japps.sunshine_version_julio.sync.SunshineSyncAdapter;
 import japps.sunshine_version_julio.utils.Utility;
 
 public class MainActivity extends AppCompatActivity implements ForecastFragment.Callback {
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
             forecastFragment.setUseTodayLayout(true);
             getSupportActionBar().setElevation(0f);
         }
+        SunshineSyncAdapter.initializeSyncAdapter(this);
     }
 
     @Override
