@@ -1,5 +1,9 @@
 package japps.sunshine_version_julio.fragments;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -22,7 +26,7 @@ import java.util.TimeZone;
 import japps.sunshine_version_julio.R;
 import japps.sunshine_version_julio.adapters.ForecastAdapter;
 import japps.sunshine_version_julio.data.WeatherContract;
-import japps.sunshine_version_julio.tasks.FetchWeatherTask;
+import japps.sunshine_version_julio.services.SunshineService;
 import japps.sunshine_version_julio.utils.Utility;
 
 ;
@@ -50,6 +54,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     private ListView mListView;
     private final int FORECAST_LOADER_ID = 0;
     private final String POSITION_KEY = "POSITION";
+    public static final String CITY_KEY = "CITY";
+    public static final String UNITS_KEY = "UNITS";
     private final String LOG_TAG = ForecastFragment.class.getSimpleName();
 
     public static final String[] FORECAST_COLUMNS = {
@@ -127,14 +133,30 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     public void updateWeather() {
         String city = Utility.getPreferredCity(getActivity());
         String tempUnit = Utility.getPreferredTempUnit(getActivity());
-        FetchWeatherTask task = new FetchWeatherTask(getActivity()) {
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-                restartLoader();
-            }
-        };
-        task.execute(city, tempUnit);
+//        FetchWeatherTask task = new FetchWeatherTask(getActivity()) {
+//            @Override
+//            protected void onPostExecute(Void aVoid) {
+//                super.onPostExecute(aVoid);
+//                restartLoader();
+//            }
+//        };
+//        task.execute(city, tempUnit);
+        Intent intent = new Intent(getActivity(), SunshineService.class);
+        intent.putExtra(ForecastFragment.CITY_KEY, city);
+        intent.putExtra(ForecastFragment.UNITS_KEY, tempUnit);
+        getActivity().startService(intent);
+
+        Intent alarmIntent = new Intent(getActivity(), SunshineService.AlarmReceiver.class);
+        alarmIntent.putExtra(ForecastFragment.CITY_KEY, city);
+        alarmIntent.putExtra(ForecastFragment.UNITS_KEY, tempUnit);
+
+        //Wrap in a pending intent which only fires once.
+        PendingIntent pi = PendingIntent.getBroadcast(getActivity(), 0,alarmIntent,PendingIntent.FLAG_ONE_SHOT);//getBroadcast(context, 0, i, 0);
+
+        AlarmManager am=(AlarmManager)getActivity().getSystemService(Context.ALARM_SERVICE);
+
+        //Set the AlarmManager to wake up the system.
+        am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (60*1000), pi);
     }
 
     public void setUseTodayLayout (boolean useTodayLayout){
