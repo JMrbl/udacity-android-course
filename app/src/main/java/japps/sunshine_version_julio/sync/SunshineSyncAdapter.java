@@ -2,12 +2,16 @@ package japps.sunshine_version_julio.sync;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.SyncRequest;
 import android.content.SyncResult;
 import android.database.Cursor;
@@ -15,6 +19,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -33,6 +39,7 @@ import java.util.Vector;
 
 import japps.sunshine_version_julio.BuildConfig;
 import japps.sunshine_version_julio.R;
+import japps.sunshine_version_julio.activities.MainActivity;
 import japps.sunshine_version_julio.data.WeatherContract;
 import japps.sunshine_version_julio.utils.Utility;
 
@@ -42,8 +49,21 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
     private static Context mContext;
     // Interval at which to sync with the weather, in milliseconds.
     // 60 seconds (1 minute)  180 = 3 hours
-    public static final int SYNC_INTERVAL = 180;
+    public static final int SYNC_INTERVAL = 60 * 10;
     public static final int SYNC_FLEXTIME = SYNC_INTERVAL/3;
+    private static final String[] NOTIFY_WEATHER_PROJECTION = new String[] {
+            WeatherContract.WeatherEntry.COLUMN_WEATHER_ID,
+            WeatherContract.WeatherEntry.COLUMN_MAX_TEMP,
+            WeatherContract.WeatherEntry.COLUMN_MIN_TEMP,
+            WeatherContract.WeatherEntry.COLUMN_SHORT_DESC
+    };
+    // these indices must match the projection
+    private static final int INDEX_WEATHER_ID = 0;
+    private static final int INDEX_MAX_TEMP = 1;
+    private static final int INDEX_MIN_TEMP = 2;
+    private static final int INDEX_SHORT_DESC = 3;
+    private static final long DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
+    private static final int WEATHER_NOTIFICATION_ID = 3004;
 
     public SunshineSyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
@@ -54,6 +74,57 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
         Log.d(LOG_TAG, "Sync data...");
         mContext = getContext();
         requestWeatherData();
+
+    }
+
+    private void notifyWeather() {
+        //checking the last update and notify if it' the first of the day
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+        String lastNotificationKey = mContext.getString(R.string.pref_last_notification);
+        long lastSync = prefs.getLong(lastNotificationKey, 0);
+
+        if (System.currentTimeMillis() - lastSync >= DAY_IN_MILLIS) {
+            // Last sync was more than 1 day ago, let's send a notification with the weather.
+            String locationQuery = Utility.getPreferredLocationSetting(mContext);
+
+            Uri weatherUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(locationQuery, System.currentTimeMillis());
+
+            // we'll query our contentProvider, as always
+            Cursor cursor = mContext.getContentResolver().query(weatherUri, NOTIFY_WEATHER_PROJECTION, null, null, null);
+
+            if (cursor.moveToFirst()) {
+                int weatherId = cursor.getInt(INDEX_WEATHER_ID);
+                double high = cursor.getDouble(INDEX_MAX_TEMP);
+                double low = cursor.getDouble(INDEX_MIN_TEMP);
+                String desc = cursor.getString(INDEX_SHORT_DESC);
+
+                int iconId = Utility.getIconResourceForWeatherCondition(weatherId);
+                String title = mContext.getString(R.string.app_name);
+
+                // Define the text of the forecast.
+                boolean isMetric = Utility.isMetric(mContext);
+                String contentText = String.format(mContext.getString(R.string.format_notification),
+                        desc,
+                        Utility.formatTemperature(mContext, high, isMetric),
+                        Utility.formatTemperature(mContext, low, isMetric));
+
+                //build your notification here.
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
+                builder.setSmallIcon(iconId).setContentTitle(title).setContentText(Utility.capitalize(contentText));
+                Intent intent = new Intent(mContext, MainActivity.class);
+                TaskStackBuilder stackBuilder = TaskStackBuilder.create(mContext);
+                stackBuilder.addParentStack(MainActivity.class);
+                stackBuilder.addNextIntent(intent);
+                PendingIntent pendingIntent = stackBuilder.getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT);
+                builder.setContentIntent(pendingIntent);
+                ((NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE))
+                        .notify(WEATHER_NOTIFICATION_ID, builder.build());
+                //refreshing last sync
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putLong(lastNotificationKey, System.currentTimeMillis());
+                editor.apply();
+            }
+        }
 
     }
 
@@ -171,6 +242,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             final String UNITS_PARAM = "units";
             final String DAYS_PARAM = "cnt";
             final String APPID_PARAM = "APPID";
+            final String LOCALE = "lang";
             int fromDays = 12;
             String apiKey = BuildConfig.OPEN_WEATHER_MAP_API_KEY;
 
@@ -178,11 +250,12 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                     .appendQueryParameter(CITY_PARAM, city)
                     .appendQueryParameter(UNITS_PARAM, units)
                     .appendQueryParameter(DAYS_PARAM, String.valueOf(fromDays))
+                    .appendQueryParameter(LOCALE, Utility.getLocale())
                     .appendQueryParameter(APPID_PARAM, apiKey)
                     .build();
 
             URL url = new URL(buildUrl.toString());
-            Log.v(LOG_TAG, "Built URI " + url);
+            Log.d(LOG_TAG, "Built URI " + url);
             // Create the request to OpenWeatherMap, and open the connection
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
@@ -271,7 +344,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
         final String OWM_MIN = "min";
 
         final String OWM_WEATHER = "weather";
-        final String OWM_DESCRIPTION = "main";
+        final String OWM_DESCRIPTION = "description";
         final String OWM_WEATHER_ID = "id";
         final String OWM_DT = "dt";
 
@@ -360,6 +433,9 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                 ContentValues[] valuesArray = new ContentValues[cVVector.size()];
                 cVVector.toArray(valuesArray);
                 inserted = resolver.bulkInsert(WeatherContract.WeatherEntry.CONTENT_URI, valuesArray);
+                if (Utility.isNotificationActive(mContext)) {
+                    notifyWeather();
+                }
             }
 
             Log.d(LOG_TAG, "FetchWeatherTask from service Complete. " + inserted + " Inserted");

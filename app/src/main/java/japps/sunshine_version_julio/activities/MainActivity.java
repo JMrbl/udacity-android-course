@@ -18,6 +18,7 @@ import japps.sunshine_version_julio.utils.Utility;
 public class MainActivity extends AppCompatActivity implements ForecastFragment.Callback {
 
     private String mLocationCity;
+    private final String LOCATION_KEY = "LK";
     static final String DETAIL_FRAGMENT_TAG = "DFTAG";
     private boolean mTwoPane;
 

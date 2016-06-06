@@ -162,7 +162,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
         // Set weather from data
         String description = data.getString(COL_WEATHER_DESC);
-        holder.descriptionView.setText(Utility.translateForecast(description));
+        holder.descriptionView.setText(Utility.capitalize(description));
         holder.iconView.setContentDescription(description);
 
         // Set high temperature from data

@@ -22,6 +22,7 @@ import java.util.TimeZone;
 import japps.sunshine_version_julio.R;
 import japps.sunshine_version_julio.adapters.ForecastAdapter;
 import japps.sunshine_version_julio.data.WeatherContract;
+import japps.sunshine_version_julio.sync.SunshineSyncAdapter;
 import japps.sunshine_version_julio.utils.Utility;
 
 ;
@@ -126,7 +127,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     public void updateWeather() {
-        //SunshineSyncAdapter.syncImmediately(getActivity());
+        SunshineSyncAdapter.syncImmediately(getActivity());
+        restartLoader();
     }
 
     public void setUseTodayLayout (boolean useTodayLayout){

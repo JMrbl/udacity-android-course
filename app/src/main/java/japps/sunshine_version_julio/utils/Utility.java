@@ -271,6 +271,14 @@ public class Utility {
                 context.getString(R.string.pref_location_default));
     }
 
+    public static boolean isNotificationActive (Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String displayNotificationsKey = context.getString(R.string.pref_enable_notifications_key);
+
+        return prefs.getBoolean(displayNotificationsKey,
+                Boolean.parseBoolean(context.getString(R.string.pref_enable_notifications_default)));
+    }
+
     public static String getLocale(){
         return Resources.getSystem().getConfiguration().locale.toString().substring(0,2);
     }

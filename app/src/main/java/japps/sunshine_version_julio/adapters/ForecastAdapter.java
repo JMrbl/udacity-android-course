@@ -98,7 +98,7 @@ public class ForecastAdapter extends CursorAdapter {
 
         // Set weather from cursor
         String description = cursor.getString(ForecastFragment.COL_WEATHER_DESC);
-        holder.descriptionView.setText(Utility.translateForecast(description));
+        holder.descriptionView.setText(Utility.capitalize(description));
         holder.iconView.setContentDescription(description);
 
         // Set high temperature from cursor
