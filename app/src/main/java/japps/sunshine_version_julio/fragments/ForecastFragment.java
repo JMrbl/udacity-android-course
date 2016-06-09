@@ -30,7 +30,7 @@ import japps.sunshine_version_julio.utils.Utility;
 /**
  * Created by Julio on 21/10/2015.
  */
-public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
     /**
      * A callback interface that all activities containing this fragment must
@@ -128,12 +128,11 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     public void updateWeather() {
         SunshineSyncAdapter.syncImmediately(getActivity());
-        restartLoader();
     }
 
-    public void setUseTodayLayout (boolean useTodayLayout){
+    public void setUseTodayLayout(boolean useTodayLayout) {
         mUseTodayLayout = useTodayLayout;
-        if (mAdapter != null){
+        if (mAdapter != null) {
             mAdapter.setUseTodayLayout(useTodayLayout);
         }
     }
@@ -184,10 +183,10 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        mAdapter.swapCursor(data);
         if (mPosition != ListView.INVALID_POSITION) {
             mListView.smoothScrollToPosition(mPosition);
         }
-        mAdapter.swapCursor(data);
     }
 
     @Override

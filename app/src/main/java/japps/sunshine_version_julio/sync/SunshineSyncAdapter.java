@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -47,9 +48,10 @@ import japps.sunshine_version_julio.utils.Utility;
 public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
     public final String LOG_TAG = SunshineSyncAdapter.class.getSimpleName();
     private static Context mContext;
+    public static final String BROADCAST_KEY = "BK";
     // Interval at which to sync with the weather, in milliseconds.
     // 60 seconds (1 minute)  180 = 3 hours
-    public static final int SYNC_INTERVAL = 60 * 10;
+    public static final int SYNC_INTERVAL = 60 * 180;
     public static final int SYNC_FLEXTIME = SYNC_INTERVAL/3;
     private static final String[] NOTIFY_WEATHER_PROJECTION = new String[] {
             WeatherContract.WeatherEntry.COLUMN_WEATHER_ID,
@@ -67,14 +69,13 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
 
     public SunshineSyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
+        mContext = mContext == null ? context : mContext;
     }
 
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
         Log.d(LOG_TAG, "Sync data...");
-        mContext = getContext();
         requestWeatherData();
-
     }
 
     private void notifyWeather() {
@@ -175,6 +176,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
      */
     public static void syncImmediately(Context context) {
         Bundle bundle = new Bundle();
+        mContext = context;
         bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
         bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
         ContentResolver.requestSync(getSyncAccount(context),
@@ -436,6 +438,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                 if (Utility.isNotificationActive(mContext)) {
                     notifyWeather();
                 }
+                LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(BROADCAST_KEY));
             }
 
             Log.d(LOG_TAG, "FetchWeatherTask from service Complete. " + inserted + " Inserted");

@@ -1,10 +1,14 @@
 package japps.sunshine_version_julio.activities;
 
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,11 +25,28 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
     private final String LOCATION_KEY = "LK";
     static final String DETAIL_FRAGMENT_TAG = "DFTAG";
     private boolean mTwoPane;
+    private ForecastFragment mForecastFragment;
+    private DetailFragment mDetailFragment;
+
+    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver(){
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(mForecastFragment.isAdded()) {
+                mForecastFragment.restartLoader();
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mForecastFragment = (ForecastFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.fragment_forecast);
+        mDetailFragment = (DetailFragment) getSupportFragmentManager()
+                .findFragmentByTag(DETAIL_FRAGMENT_TAG);
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                mBroadcastReceiver, new IntentFilter(SunshineSyncAdapter.BROADCAST_KEY));
         if (findViewById(R.id.weather_detail_container) != null) {
             // The detail container view will be present only in the large-screen layouts
             // (res/layout-sw600dp). If this view is present, then the activity should be
@@ -41,9 +62,9 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
             }
         } else {
             mTwoPane = false;
-            ForecastFragment forecastFragment = (ForecastFragment) getSupportFragmentManager()
-                    .findFragmentById(R.id.fragment_forecast);
-            forecastFragment.setUseTodayLayout(true);
+//            ForecastFragment forecastFragment = (ForecastFragment) getSupportFragmentManager()
+//                    .findFragmentById(R.id.fragment_forecast);
+            mForecastFragment.setUseTodayLayout(true);
             getSupportActionBar().setElevation(0f);
         }
         SunshineSyncAdapter.initializeSyncAdapter(this);
@@ -59,20 +80,20 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
     @Override
     protected void onResume() {
         super.onResume();
-        String locationCity = Utility.getPreferredCity(this);
-        if (locationCity != null && !locationCity.equals(mLocationCity)) {
-            ForecastFragment ff = (ForecastFragment) getSupportFragmentManager()
-                    .findFragmentById(R.id.fragment_forecast);
-            if (ff != null) {
-                ff.onLocationChanged();
+        String newLocationCity = Utility.getPreferredCity(this);
+        if (newLocationCity != null && mLocationCity != null && !newLocationCity.equals(mLocationCity)) {
+//            final ForecastFragment ff = (ForecastFragment) getSupportFragmentManager()
+//                    .findFragmentById(R.id.fragment_forecast);
+            if (mForecastFragment != null) {
+                mForecastFragment.onLocationChanged();
             }
-            DetailFragment df = (DetailFragment) getSupportFragmentManager()
-                    .findFragmentByTag(DETAIL_FRAGMENT_TAG);
-            if (df != null) {
-                df.onLocationChanged(locationCity);
+//            DetailFragment df = (DetailFragment) getSupportFragmentManager()
+//                    .findFragmentByTag(DETAIL_FRAGMENT_TAG);
+            if (mDetailFragment != null) {
+                mDetailFragment.onLocationChanged(newLocationCity);
             }
-            mLocationCity = locationCity;
         }
+        mLocationCity = newLocationCity;
     }
 
     @Override
