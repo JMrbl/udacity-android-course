@@ -31,7 +31,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-condensed"
-            android:textColor="@color/grey900"
+            android:textColor="@color/white"
             android:textSize="22sp" />
 
         <TextView
@@ -39,7 +39,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-condensed"
-            android:textAppearance="?android:textAppearanceSmall" />
+            android:textAppearance="?android:textAppearanceSmall"
+            android:textColor="@color/grey500" />
     </LinearLayout>
 
     <LinearLayout
@@ -55,15 +56,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:textColor="@color/grey900"
-            android:textSize="22sp" />
+            android:textColor="@color/white"
+            android:textSize="22sp"
+            android:fontFamily="sans-serif-light" />
 
         <TextView
             android:id="@+id/list_item_low_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            android:textColor="@color/grey500"
+            android:fontFamily="sans-serif-light" />
     </LinearLayout>
 
 </LinearLayout>

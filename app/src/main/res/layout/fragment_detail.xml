@@ -2,7 +2,8 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@color/blueGrey900">
 
     <!-- Main linear layout (Vertical) -->
     <LinearLayout
@@ -27,7 +28,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="24sp"
                 android:fontFamily="sans-serif-condensed"
-                android:textColor="@color/grey900" />
+                android:textColor="@color/white" />
 
             <TextView
                 android:id="@+id/detail_date_textview"
@@ -35,7 +36,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
                 android:fontFamily="sans-serif-condensed"
-                android:textColor="@color/grey700" />
+                android:textColor="@color/grey500" />
 
         </LinearLayout>
 
@@ -66,7 +67,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="96sp"
-                    android:textColor="@color/grey900"
+                    android:textColor="@color/white"
                     android:fontFamily="sans-serif-light" />
 
                 <TextView
@@ -74,7 +75,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="48sp"
-                    android:textColor="@color/grey700"
+                    android:textColor="@color/grey500"
                     android:fontFamily="sans-serif-light" />
             </LinearLayout>
 
@@ -99,7 +100,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:textSize="22sp"
-                    android:textColor="@color/grey700"
+                    android:textColor="@color/grey500"
                     android:fontFamily="sans-serif-condensed" />
             </LinearLayout>
         </LinearLayout>
@@ -110,7 +111,7 @@
             android:layout_height="wrap_content"
             android:textSize="22sp"
             android:fontFamily="sans-serif-light"
-            android:textColor="@color/grey900" />
+            android:textColor="@color/white" />
 
         <TextView
             android:id="@+id/detail_wind_textview"
@@ -118,7 +119,7 @@
             android:layout_height="wrap_content"
             android:textSize="22sp"
             android:fontFamily="sans-serif-light"
-            android:textColor="@color/grey900" />
+            android:textColor="@color/white" />
 
         <TextView
             android:id="@+id/detail_pressure_textview"
@@ -126,6 +127,6 @@
             android:layout_height="wrap_content"
             android:textSize="22sp"
             android:fontFamily="sans-serif-light"
-            android:textColor="@color/grey900" />
+            android:textColor="@color/white" />
     </LinearLayout>
 </ScrollView>
