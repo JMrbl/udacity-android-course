@@ -22,20 +22,27 @@ import japps.sunshine_version_julio.utils.Utility;
 public class MainActivity extends AppCompatActivity implements ForecastFragment.Callback {
 
     private String mLocationCity;
-    private final String LOCATION_KEY = "LK";
     static final String DETAIL_FRAGMENT_TAG = "DFTAG";
     private boolean mTwoPane;
     private ForecastFragment mForecastFragment;
     private DetailFragment mDetailFragment;
+    public static String BROADCAST_KEY = "BK";
 
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver(){
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(mForecastFragment.isAdded()) {
+            String key = intent.getAction();
+            if(key.equals(SunshineSyncAdapter.BROADCAST_KEY) && mForecastFragment.isAdded()) {
                 mForecastFragment.restartLoader();
+            } else if (key.equals(ForecastFragment.BROADCAST_KEY)){
+                mForecastFragment.selectListViewItem();
             }
         }
     };
+
+    public boolean isTwoPane() {
+        return mTwoPane;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +54,8 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
                 .findFragmentByTag(DETAIL_FRAGMENT_TAG);
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 mBroadcastReceiver, new IntentFilter(SunshineSyncAdapter.BROADCAST_KEY));
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                mBroadcastReceiver, new IntentFilter(ForecastFragment.BROADCAST_KEY));
         if (findViewById(R.id.weather_detail_container) != null) {
             // The detail container view will be present only in the large-screen layouts
             // (res/layout-sw600dp). If this view is present, then the activity should be
@@ -67,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
             mForecastFragment.setUseTodayLayout(true);
             getSupportActionBar().setElevation(0f);
         }
-        SunshineSyncAdapter.initializeSyncAdapter(this);
+        //SunshineSyncAdapter.initializeSyncAdapter(this);
     }
 
     @Override

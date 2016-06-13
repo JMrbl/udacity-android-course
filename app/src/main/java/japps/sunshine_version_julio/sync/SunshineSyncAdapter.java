@@ -48,7 +48,7 @@ import japps.sunshine_version_julio.utils.Utility;
 public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
     public final String LOG_TAG = SunshineSyncAdapter.class.getSimpleName();
     private static Context mContext;
-    public static final String BROADCAST_KEY = "BK";
+    public static final String BROADCAST_KEY = "SYNC_ADAPTER_BK";
     // Interval at which to sync with the weather, in milliseconds.
     // 60 seconds (1 minute)  180 = 3 hours
     public static final int SYNC_INTERVAL = 60 * 180;
