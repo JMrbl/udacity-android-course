@@ -22,6 +22,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.format.Time;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -52,8 +53,8 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
     // Interval at which to sync with the weather, in milliseconds.
     // 60 seconds (1 minute)  180 = 3 hours
     public static final int SYNC_INTERVAL = 60 * 180;
-    public static final int SYNC_FLEXTIME = SYNC_INTERVAL/3;
-    private static final String[] NOTIFY_WEATHER_PROJECTION = new String[] {
+    public static final int SYNC_FLEXTIME = SYNC_INTERVAL / 3;
+    private static final String[] NOTIFY_WEATHER_PROJECTION = new String[]{
             WeatherContract.WeatherEntry.COLUMN_WEATHER_ID,
             WeatherContract.WeatherEntry.COLUMN_MAX_TEMP,
             WeatherContract.WeatherEntry.COLUMN_MIN_TEMP,
@@ -116,7 +117,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                 TaskStackBuilder stackBuilder = TaskStackBuilder.create(mContext);
                 stackBuilder.addParentStack(MainActivity.class);
                 stackBuilder.addNextIntent(intent);
-                PendingIntent pendingIntent = stackBuilder.getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
                 builder.setContentIntent(pendingIntent);
                 ((NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE))
                         .notify(WEATHER_NOTIFICATION_ID, builder.build());
@@ -172,6 +173,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
 
     /**
      * Helper method to have the sync adapter sync immediately
+     *
      * @param context The context used to access the account service
      */
     public static void syncImmediately(Context context) {
@@ -201,7 +203,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                 context.getString(R.string.app_name), context.getString(R.string.sync_account_type));
 
         // If the password doesn't exist, the account doesn't exist
-        if ( null == accountManager.getPassword(newAccount) ) {
+        if (null == accountManager.getPassword(newAccount)) {
 
         /*
          * Add the account and account type, no password or user data
@@ -222,7 +224,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
         return newAccount;
     }
 
-    private void requestWeatherData (){
+    private void requestWeatherData() {
 
         // These two need to be declared outside the try/catch
         // so that they can be closed in the finally block.
@@ -365,7 +367,6 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             double cityLongitude = cityCoord.getDouble(OWM_LONGITUDE);
 
             long locationId = addLocation(locationSetting, cityName, cityLatitude, cityLongitude);
-
             // Insert the new weather information into the database
             Vector<ContentValues> cVVector = new Vector<>(weatherArray.length());
 
@@ -430,11 +431,18 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
 
             // add to database
             int inserted = 0;
+            Time dayTime = new Time();
+            int julianStartDay = Time.getJulianDay(System.currentTimeMillis(), dayTime.gmtoff);
+            String yesterday = Long.toString(dayTime.setJulianDay(julianStartDay - 1));
             if (cVVector.size() > 0) {
                 ContentResolver resolver = mContext.getContentResolver();
                 ContentValues[] valuesArray = new ContentValues[cVVector.size()];
                 cVVector.toArray(valuesArray);
                 inserted = resolver.bulkInsert(WeatherContract.WeatherEntry.CONTENT_URI, valuesArray);
+                // delete old data so we don't build up an endless history
+                getContext().getContentResolver().delete(WeatherContract.WeatherEntry.CONTENT_URI,
+                        WeatherContract.WeatherEntry.COLUMN_DATE + " <= ?",
+                        new String[]{yesterday});
                 if (Utility.isNotificationActive(mContext)) {
                     notifyWeather();
                 }

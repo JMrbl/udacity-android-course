@@ -5,12 +5,16 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -103,8 +107,45 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         setCityTimeTextView();
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.forecast_fragment, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_map) {
+            showMap();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     public void onLocationChanged() {
         updateWeather();
+    }
+
+    public void showMap() {
+        if (mAdapter != null) {
+            Cursor c = mAdapter.getCursor();
+            if (c != null) {
+                c.moveToPosition(0);
+                String posLat = c.getString(COL_COORD_LAT);
+                String posLong = c.getString(COL_COORD_LONG);
+//                String city = Utility.getPreferredCity(getActivity());
+//                Uri uriGeo = Uri.parse(String.format("geo:0,0?q=%s", city));
+                Uri uriGeo = Uri.parse("geo:0,0?q=" + posLat + "," + posLong);
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(uriGeo);
+                if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                    startActivity(intent);
+                } else {
+                    Snackbar.make(getActivity().getCurrentFocus(), "App map not found", Snackbar.LENGTH_LONG).show();
+                }
+            }
+        }
     }
 
     public void restartLoader() {

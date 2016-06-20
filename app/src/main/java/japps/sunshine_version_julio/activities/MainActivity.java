@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -108,10 +107,6 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_map) {
-            showMap();
-            return true;
-        }
         if (id == R.id.action_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
             return true;
@@ -119,16 +114,7 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
         return super.onOptionsItemSelected(item);
     }
 
-    public void showMap() {
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        String city = Utility.getPreferredCity(this);
-        intent.setData(Uri.parse(String.format("geo:0,0?q=%s", city)));
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivity(intent);
-        } else {
-            Snackbar.make(getCurrentFocus(), "App map not found", Snackbar.LENGTH_LONG).show();
-        }
-    }
+
 
     @Override
     public void onItemSelected(Uri contentUri) {
