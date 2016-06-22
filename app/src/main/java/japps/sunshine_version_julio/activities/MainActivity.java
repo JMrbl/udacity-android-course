@@ -11,6 +11,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ProgressBar;
 
 import japps.sunshine_version_julio.R;
 import japps.sunshine_version_julio.fragments.DetailFragment;
@@ -23,19 +24,40 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
     private String mLocationCity;
     static final String DETAIL_FRAGMENT_TAG = "DFTAG";
     private boolean mTwoPane;
+    private ProgressBar mProgressBar;
     private ForecastFragment mForecastFragment;
     private DetailFragment mDetailFragment;
-    public static String BROADCAST_KEY = "BK";
 
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver(){
         @Override
         public void onReceive(Context context, Intent intent) {
             String key = intent.getAction();
-            if(key.equals(SunshineSyncAdapter.BROADCAST_KEY) && mForecastFragment.isAdded()) {
-                mForecastFragment.restartLoader();
-            } else if (key.equals(ForecastFragment.BROADCAST_KEY)){
-                mForecastFragment.selectListViewItem();
+            switch (key){
+                case SunshineSyncAdapter.SYNC_START_KEY:{
+                    if (mProgressBar != null){
+                        mProgressBar.setVisibility(ProgressBar.VISIBLE);
+                    }
+                    break;
+                }
+                case SunshineSyncAdapter.SYNC_FINISH_KEY:{
+                    mForecastFragment.restartLoader();
+                    break;
+                }
+                case ForecastFragment.CURSOR_LOADER_FINISH_KEY:{
+                    if (mProgressBar != null){
+                        mProgressBar.setVisibility(ProgressBar.GONE);
+                    }
+                    break;
+                }
+                case ForecastFragment.CURSOR_LOADER_FINISH_TABLET_KEY:{
+                    mForecastFragment.selectListViewItem();
+                }
             }
+//            if(key.equals(SunshineSyncAdapter.SYNC_FINISH_KEY) && mForecastFragment.isAdded()) {
+//                mForecastFragment.restartLoader();
+//            } else if (key.equals(ForecastFragment.CURSOR_LOADER_FINISH_KEY)){
+//                mForecastFragment.selectListViewItem();
+//            }
         }
     };
 
@@ -52,9 +74,14 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
         mDetailFragment = (DetailFragment) getSupportFragmentManager()
                 .findFragmentByTag(DETAIL_FRAGMENT_TAG);
         LocalBroadcastManager.getInstance(this).registerReceiver(
-                mBroadcastReceiver, new IntentFilter(SunshineSyncAdapter.BROADCAST_KEY));
+                mBroadcastReceiver, new IntentFilter(SunshineSyncAdapter.SYNC_START_KEY));
         LocalBroadcastManager.getInstance(this).registerReceiver(
-                mBroadcastReceiver, new IntentFilter(ForecastFragment.BROADCAST_KEY));
+                mBroadcastReceiver, new IntentFilter(SunshineSyncAdapter.SYNC_FINISH_KEY));
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                mBroadcastReceiver, new IntentFilter(ForecastFragment.CURSOR_LOADER_FINISH_KEY));
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                mBroadcastReceiver, new IntentFilter(ForecastFragment.CURSOR_LOADER_FINISH_TABLET_KEY));
+        mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
         if (findViewById(R.id.weather_detail_container) != null) {
             // The detail container view will be present only in the large-screen layouts
             // (res/layout-sw600dp). If this view is present, then the activity should be

@@ -62,7 +62,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     private final String POSITION_KEY = "POSITION";
     public static final String CITY_KEY = "CITY";
     public static final String UNITS_KEY = "UNITS";
-    public static final String BROADCAST_KEY = "FORECAST_FRAGMENT_BK";
+    public static final String CURSOR_LOADER_FINISH_KEY = "LOADER_FINISH";
+    public static final String CURSOR_LOADER_FINISH_TABLET_KEY = "LOADER_FINISH_TABLET";
     private final String LOG_TAG = ForecastFragment.class.getSimpleName();
 
     public static final String[] FORECAST_COLUMNS = {
@@ -255,8 +256,10 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         if (((MainActivity) mContext).isTwoPane() && mPosition != ListView.INVALID_POSITION) {
             mListView.smoothScrollToPosition(mPosition);
             if (!mSavedState) {
-                LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(BROADCAST_KEY));
+                LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(CURSOR_LOADER_FINISH_TABLET_KEY));
             }
+        } else if (!((MainActivity) mContext).isTwoPane()) {
+            LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(CURSOR_LOADER_FINISH_KEY));
         }
     }
 

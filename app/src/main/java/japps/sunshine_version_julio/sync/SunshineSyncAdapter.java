@@ -49,7 +49,8 @@ import japps.sunshine_version_julio.utils.Utility;
 public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
     public final String LOG_TAG = SunshineSyncAdapter.class.getSimpleName();
     private static Context mContext;
-    public static final String BROADCAST_KEY = "SYNC_ADAPTER_BK";
+    public static final String SYNC_START_KEY = "SYNC_ADAPTER_START";
+    public static final String SYNC_FINISH_KEY = "SYNC_ADAPTER_FINISH";
     // Interval at which to sync with the weather, in milliseconds.
     // 60 seconds (1 minute)  180 = 3 hours
     public static final int SYNC_INTERVAL = 60 * 180;
@@ -76,6 +77,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
         Log.d(LOG_TAG, "Sync data...");
+        LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(SYNC_START_KEY));
         requestWeatherData();
     }
 
@@ -446,7 +448,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                 if (Utility.isNotificationActive(mContext)) {
                     notifyWeather();
                 }
-                LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(BROADCAST_KEY));
+                LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(SYNC_FINISH_KEY));
             }
 
             Log.d(LOG_TAG, "FetchWeatherTask from service Complete. " + inserted + " Inserted");

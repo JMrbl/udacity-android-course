@@ -15,6 +15,17 @@
         android:textColor="@color/white"
         android:gravity="right"
         android:paddingRight="10dp" />
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progress_bar"
+        style="@android:style/Widget.Material.ProgressBar.Large"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:elevation="1dp"
+        tools:targetApi="lollipop"
+        android:visibility="gone"
+        />
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
