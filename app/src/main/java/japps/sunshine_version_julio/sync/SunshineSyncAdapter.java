@@ -22,7 +22,6 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.LocalBroadcastManager;
-import android.text.format.Time;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -36,7 +35,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.Vector;
 
 import japps.sunshine_version_julio.BuildConfig;
@@ -394,10 +392,9 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                 JSONObject dayForecast = weatherArray.getJSONObject(i);
 
                 // Cheating to convert this to UTC time, which is what we want anyhow
-                Calendar calendar = new GregorianCalendar();
+                Calendar calendar = Calendar.getInstance();
                 calendar.add(Calendar.DATE, i);
                 dateTime = calendar.getTimeInMillis();
-
                 pressure = dayForecast.getDouble(OWM_PRESSURE);
                 humidity = dayForecast.getInt(OWM_HUMIDITY);
                 windSpeed = dayForecast.getDouble(OWM_WINDSPEED);
@@ -433,9 +430,10 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
 
             // add to database
             int inserted = 0;
-            Time dayTime = new Time();
-            int julianStartDay = Time.getJulianDay(System.currentTimeMillis(), dayTime.gmtoff);
-            String yesterday = Long.toString(dayTime.setJulianDay(julianStartDay - 1));
+            Calendar calendar = Calendar.getInstance();
+//            String today = Long.toString(Utility.getStartOfDayInMillis(calendar.getTime()));
+            calendar.add(Calendar.DATE, -1);
+            String yesterday = Long.toString(Utility.getStartOfDayInMillis(calendar.getTime()));
             if (cVVector.size() > 0) {
                 ContentResolver resolver = mContext.getContentResolver();
                 ContentValues[] valuesArray = new ContentValues[cVVector.size()];
