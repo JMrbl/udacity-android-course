@@ -29,10 +29,11 @@ import android.text.format.Time;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
-import japps.sunshine_version_julio.fragments.ForecastFragment;
 import japps.sunshine_version_julio.R;
+import japps.sunshine_version_julio.fragments.ForecastFragment;
 
 public class Utility {
 
@@ -40,21 +41,21 @@ public class Utility {
     // back into date objects for comparison/processing.
     public static final String DATE_FORMAT = "yyyyMMdd";
 
-    public static String translateForecast(String forecast){
-        if (!getLocale().equals("es")){
+    public static String translateForecast(String forecast) {
+        if (!getLocale().equals("es")) {
             return forecast;
         }
-        switch (forecast){
-            case "Clear":{
+        switch (forecast) {
+            case "Clear": {
                 return "Despejado";
             }
-            case "Clouds":{
+            case "Clouds": {
                 return "Nublado";
             }
-            case "Rain":{
+            case "Rain": {
                 return "Lluvia";
             }
-            default:{
+            default: {
                 return forecast;
             }
         }
@@ -63,6 +64,7 @@ public class Utility {
     /**
      * Helper method to provide the icon resource id according to the weather condition id returned
      * by the OpenWeatherMap call.
+     *
      * @param weatherId from OpenWeatherMap API response
      * @return resource id for the corresponding icon. -1 if no relation is found.
      */
@@ -98,6 +100,7 @@ public class Utility {
     /**
      * Helper method to provide the art resource id according to the weather condition id returned
      * by the OpenWeatherMap call.
+     *
      * @param weatherId from OpenWeatherMap API response
      * @return resource id for the corresponding image. -1 if no relation is found.
      */
@@ -160,14 +163,14 @@ public class Utility {
             direction = "W";
         } else if (degrees < 337.5) {
             direction = "NW";
-        } else if (degrees <=360.0 ){
+        } else if (degrees <= 360.0) {
             direction = "N";
         }
         return String.format(context.getString(windFormat), windSpeed, direction).trim();
     }
 
     private static String getWindDirection(float degrees) {
-        final String[] directionsText = { "N", "NE", "E", "SE", "S", "SW", "W", "NW" };
+        final String[] directionsText = {"N", "NE", "E", "SE", "S", "SW", "W", "NW"};
         final int DEGREES_TOTAL = 360;
         final int DIR_TOTAL = 8;
         int val = Math.round(Math.abs(degrees) / (DEGREES_TOTAL / DIR_TOTAL)) % DIR_TOTAL;
@@ -178,7 +181,7 @@ public class Utility {
      * Helper method to convert the database representation of the date into something to display
      * to users.  As classy and polished a user experience as "20140102" is, we can do better.
      *
-     * @param context Context to use for resource localization
+     * @param context      Context to use for resource localization
      * @param dateInMillis The date in milliseconds
      * @return a user-friendly representation of the date.
      */
@@ -189,15 +192,20 @@ public class Utility {
         // For the next 5 days: "Wednesday" (just the day name)
         // For all days after that: "Mon Jun 8"
 
-        Time time = new Time();
-        time.setToNow();
         long currentTime = System.currentTimeMillis();
-        int julianDay = Time.getJulianDay(dateInMillis, time.gmtoff);
-        int currentJulianDay = Time.getJulianDay(currentTime, time.gmtoff);
-
+//        int julianDay = Time.getJulianDay(dateInMillis, time.gmtoff);
+//        int currentJulianDay = Time.getJulianDay(currentTime, time.gmtoff);
+//        Log.d("TIMEZONE", "TIMEZONE: "+ TimeZone.getDefault());
+//        Log.d("TIMEZONE", "Current time: "+ new SimpleDateFormat("EEE MMM hh:mm").format(currentTime));
+//        Log.d("TIMEZONE", "Date: "+ new SimpleDateFormat("EEE MMM hh:mm").format(dateInMillis));
+        Calendar calendar1 = Calendar.getInstance();
+        Calendar calendar2 = Calendar.getInstance();
+        calendar2.setTime(new Date(dateInMillis));
+        int currentDay = calendar1.get(Calendar.DAY_OF_YEAR);
+        int day = calendar2.get(Calendar.DAY_OF_YEAR);
         // If the date we're building the String for is today's date, the format
         // is "Today, June 24"
-        if (julianDay == currentJulianDay) {
+        if (currentDay == day) {
             String today = context.getString(R.string.today);
             int formatId = R.string.format_full_friendly_date;
             return String.format(context.getString(
@@ -205,7 +213,7 @@ public class Utility {
                     today,
                     getFormattedMonthDay(context, dateInMillis))).trim();
 //            return today;
-        } else if ( julianDay < currentJulianDay + 7 ) {
+        } else if (day < currentDay + 7) {
             // If the input date is less than a week in the future, just return the day name.
             return getDayName(context, dateInMillis);
         } else {
@@ -215,11 +223,21 @@ public class Utility {
         }
     }
 
+    public static long getStartOfDayInMillis(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        return calendar.getTimeInMillis();
+    }
+
     /**
      * Given a day, returns just the name to use for that day.
      * E.g "today", "tomorrow", "wednesday".
      *
-     * @param context Context to use for resource localization
+     * @param context      Context to use for resource localization
      * @param dateInMillis The date in milliseconds
      * @return
      */
@@ -233,7 +251,7 @@ public class Utility {
         int currentJulianDay = Time.getJulianDay(System.currentTimeMillis(), t.gmtoff);
         if (julianDay == currentJulianDay) {
             return context.getString(R.string.today);
-        } else if ( julianDay == currentJulianDay +1 ) {
+        } else if (julianDay == currentJulianDay + 1) {
             return context.getString(R.string.tomorrow);
         } else {
             Time time = new Time();
@@ -246,12 +264,13 @@ public class Utility {
 
     /**
      * Converts db date format to the format "Month day", e.g "June 24".
-     * @param context Context to use for resource localization
+     *
+     * @param context      Context to use for resource localization
      * @param dateInMillis The db formatted date string, expected to be of the form specified
-     *                in Utility.DATE_FORMAT
+     *                     in Utility.DATE_FORMAT
      * @return The day in the form of a string formatted "December 6"
      */
-    public static String getFormattedMonthDay(Context context, long dateInMillis ) {
+    public static String getFormattedMonthDay(Context context, long dateInMillis) {
         Time time = new Time();
         time.setToNow();
         SimpleDateFormat dbDateFormat = new SimpleDateFormat(Utility.DATE_FORMAT);
@@ -265,13 +284,14 @@ public class Utility {
         return prefs.getString(context.getString(R.string.pref_location_setting_key),
                 context.getString(R.string.pref_location_setting_default));
     }
+
     public static String getPreferredCity(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getString(context.getString(R.string.pref_location_key),
                 context.getString(R.string.pref_location_default));
     }
 
-    public static boolean isNotificationActive (Context context) {
+    public static boolean isNotificationActive(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String displayNotificationsKey = context.getString(R.string.pref_enable_notifications_key);
 
@@ -279,8 +299,8 @@ public class Utility {
                 Boolean.parseBoolean(context.getString(R.string.pref_enable_notifications_default)));
     }
 
-    public static String getLocale(){
-        return Resources.getSystem().getConfiguration().locale.toString().substring(0,2);
+    public static String getLocale() {
+        return Resources.getSystem().getConfiguration().locale.toString().substring(0, 2);
     }
 
     public static String getPreferredTempUnit(Context context) {
@@ -336,9 +356,9 @@ public class Utility {
                 " - " + highAndLow;
     }
 
-    public static String capitalize(@NonNull String word){
+    public static String capitalize(@NonNull String word) {
         String firstLetter = Character.toString(word.charAt(0));
         String firstLetterUpper = Character.toString(word.charAt(0)).toUpperCase();
-        return word.replaceFirst(firstLetter,firstLetterUpper);
+        return word.replaceFirst(firstLetter, firstLetterUpper);
     }
 }

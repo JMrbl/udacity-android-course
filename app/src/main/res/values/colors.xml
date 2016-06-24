@@ -275,7 +275,7 @@
     <color name="amber500">#FFC107</color>
     <color name="amber600">#FFB300</color>
     <color name="amber700">#FFA000</color>
-    <color name="amber800">#FF8F00</color>
+    <color name="amber800">#ff8f00</color>
     <color name="amber900">#FF6F00</color>
     <color name="amberA100">#FFE57F</color>
     <color name="amberA200">#FFD740</color>

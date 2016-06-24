@@ -105,7 +105,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onStart() {
         super.onStart();
-        setCityTimeTextView();
+        //setCityTimeTextView();
     }
 
     @Override
@@ -131,8 +131,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     public void showMap() {
         if (mAdapter != null) {
             Cursor c = mAdapter.getCursor();
-            if (c != null) {
-                c.moveToPosition(0);
+            if (c != null && c.moveToPosition(0)) {
                 String posLat = c.getString(COL_COORD_LAT);
                 String posLong = c.getString(COL_COORD_LONG);
 //                String city = Utility.getPreferredCity(getActivity());
@@ -155,7 +154,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     public void setCityTimeTextView() {
         if (getView() != null) {
-            TextView textView = (TextView) getView().findViewById(R.id.mainTextView);
+            TextView textView = (TextView) getView().findViewById(R.id.cityName_TextView);
             String city = Utility.getPreferredCity(mContext);
             String horaActual = new SimpleDateFormat("h:mm a").format(
                     Calendar.getInstance(

@@ -23,6 +23,7 @@ import android.widget.TextView;
 
 import japps.sunshine_version_julio.R;
 import japps.sunshine_version_julio.activities.DetailActivity;
+import japps.sunshine_version_julio.activities.MainActivity;
 import japps.sunshine_version_julio.data.WeatherContract;
 import japps.sunshine_version_julio.data.WeatherContract.WeatherEntry;
 import japps.sunshine_version_julio.utils.Utility;
@@ -155,6 +156,11 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         // Set weather image
         holder.iconView.setImageResource(Utility.getArtResourceForWeatherCondition(weatherId));
 
+        // Set city if two pane mode is active
+        if (((MainActivity)getActivity()).isTwoPane()) {
+            holder.cityView.setText(Utility.capitalize(Utility.getPreferredCity(getActivity())));
+        }
+
         // Set date from data
         long dateMillis = data.getLong(COL_WEATHER_DATE);
         holder.dayView.setText(Utility.getDayName(getActivity(), dateMillis));
@@ -188,7 +194,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         holder.pressure.setText(getActivity().getString(R.string.format_pressure, pressure));
 
         // We still need this for the share intent
-        mForecast = String.format("%s - %s - %s/%s", dateMillis, description, high, low);
+        mForecast = String.format("%s - %s - %s/%s", Utility.formatDate(dateMillis), description, high, low);
 
         setShareIntent();
     }
@@ -207,10 +213,12 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         public final TextView humidity;
         public final TextView wind;
         public final TextView pressure;
+        private final TextView cityView;
 
         public ViewHolder(View view) {
             iconView = (ImageView) view.findViewById(R.id.detail_forecast_icon);
             dayView = (TextView) view.findViewById(R.id.detail_day_textview);
+            cityView = (TextView) view.findViewById(R.id.detail_city_textView);
             dateView = (TextView) view.findViewById(R.id.detail_date_textview);
             descriptionView = (TextView) view.findViewById(R.id.detail_forecast_textview);
             highTempView = (TextView) view.findViewById(R.id.detail_high_textview);

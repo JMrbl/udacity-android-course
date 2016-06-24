@@ -85,6 +85,7 @@ public class ForecastAdapter extends CursorAdapter {
             case VIEW_TYPE_TODAY: {
                 // Set forecast icon
                 holder.iconView.setImageResource(Utility.getArtResourceForWeatherCondition(weatherId));
+                holder.cityView.setText(Utility.capitalize(Utility.getPreferredCity(mContext)));
                 break;
             }
             case VIEW_TYPE_FUTURE_DAY: {
@@ -116,11 +117,13 @@ public class ForecastAdapter extends CursorAdapter {
         public final TextView descriptionView;
         public final TextView highTempView;
         public final TextView lowTempView;
+        private final TextView cityView;
 
         public ViewHolder(View view) {
             iconView = (ImageView) view.findViewById(R.id.list_item_icon);
             dateView = (TextView) view.findViewById(R.id.list_item_date_textview);
             descriptionView = (TextView) view.findViewById(R.id.list_item_forecast_textview);
+            cityView = (TextView) view.findViewById(R.id.cityName_TextView);
             highTempView = (TextView) view.findViewById(R.id.list_item_high_textview);
             lowTempView = (TextView) view.findViewById(R.id.list_item_low_textview);
         }

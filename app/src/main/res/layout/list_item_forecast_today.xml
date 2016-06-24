@@ -6,16 +6,17 @@
     android:layout_gravity="center_vertical"
     android:orientation="horizontal"
     android:background="@color/colorPrimary"
-    android:paddingLeft="65dp"
-    android:paddingTop="10dp"
+    android:paddingLeft="40dp"
     android:paddingRight="10dp"
     android:paddingBottom="10dp">
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:layout_weight="1">
+        android:layout_weight="2"
+        android:gravity="center"
+        android:paddingTop="13dp">
 
         <TextView
             android:id="@+id/list_item_date_textview"
@@ -47,16 +48,23 @@
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         android:layout_weight="1"
         android:gravity="center"
         android:layout_gravity="center_vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="22sp"
+            android:id="@+id/cityName_TextView"
+            android:textColor="@color/white"
+            android:fontFamily="sans-serif-condensed" />
         <ImageView
             android:id="@+id/list_item_icon"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:gravity="center_vertical"/>
+            android:gravity="center_vertical" />
         <TextView
             android:id="@+id/list_item_forecast_textview"
             android:layout_width="160dp"

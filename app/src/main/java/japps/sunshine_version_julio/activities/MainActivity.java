@@ -40,7 +40,9 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
                     break;
                 }
                 case SunshineSyncAdapter.SYNC_FINISH_KEY:{
-                    mForecastFragment.restartLoader();
+                    if (mForecastFragment.isAdded()) {
+                        mForecastFragment.restartLoader();
+                    }
                     break;
                 }
                 case ForecastFragment.CURSOR_LOADER_FINISH_KEY:{
@@ -50,6 +52,9 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
                     break;
                 }
                 case ForecastFragment.CURSOR_LOADER_FINISH_TABLET_KEY:{
+                    if (mProgressBar != null){
+                        mProgressBar.setVisibility(ProgressBar.GONE);
+                    }
                     mForecastFragment.selectListViewItem();
                 }
             }
@@ -102,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
             mForecastFragment.setUseTodayLayout(true);
             getSupportActionBar().setElevation(0f);
         }
-        //SunshineSyncAdapter.initializeSyncAdapter(this);
+        SunshineSyncAdapter.initializeSyncAdapter(this);
     }
 
     @Override
