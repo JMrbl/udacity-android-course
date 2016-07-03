@@ -234,7 +234,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
         // Will contain the raw JSON response as a string.
         String forecastJsonStr = null;
         String city = Utility.getPreferredCity(mContext);
-        String units = Utility.getPreferredTempUnit(mContext);
+        String units = "metric";
 
         try {
             // Construct the URL for the OpenWeatherMap query

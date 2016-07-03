@@ -132,8 +132,12 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             long date = WeatherContract.WeatherEntry.getDateFromUri(uri);
             Uri updatedUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(newLocation, date);
             mUri = updatedUri;
-            getLoaderManager().restartLoader(DETAIL_LOADER, null, this);
+            restartLoader();
         }
+    }
+
+    public void restartLoader() {
+        getLoaderManager().restartLoader(DETAIL_LOADER, null, this);
     }
 
     @Override
@@ -152,8 +156,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         }
         int weatherId = data.getInt(COL_WEATHER_CONDITION_ID);
         ViewHolder holder = (ViewHolder) getView().getTag();
-        MainActivity mainActivity = getActivity() instanceof  MainActivity ?
-                ((MainActivity)getActivity()): null;
+        MainActivity mainActivity = getActivity() instanceof MainActivity ?
+                ((MainActivity) getActivity()) : null;
         // Set weather image
         holder.iconView.setImageResource(Utility.getArtResourceForWeatherCondition(weatherId));
 

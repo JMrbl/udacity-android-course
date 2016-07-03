@@ -22,6 +22,7 @@ import japps.sunshine_version_julio.utils.Utility;
 public class MainActivity extends AppCompatActivity implements ForecastFragment.Callback {
 
     private String mLocationCity;
+    private String mUnit;
     static final String DETAIL_FRAGMENT_TAG = "DFTAG";
     private boolean mTwoPane;
     private ProgressBar mProgressBar;
@@ -120,6 +121,24 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
     @Override
     protected void onResume() {
         super.onResume();
+        onLocationChanged();
+        onUnitsChanged();
+    }
+
+    private void onUnitsChanged() {
+        String newUnit = Utility.getPreferredTempUnit(this);
+        if (newUnit != null && mUnit != null && !newUnit.equals(mUnit)){
+            if (mForecastFragment != null) {
+                mForecastFragment.restartLoader();
+            }
+            if (mDetailFragment != null) {
+                mDetailFragment.restartLoader();
+            }
+        }
+        mUnit = newUnit;
+    }
+
+    private void onLocationChanged() {
         String newLocationCity = Utility.getPreferredCity(this);
         if (newLocationCity != null && mLocationCity != null && !newLocationCity.equals(mLocationCity)) {
 //            final ForecastFragment ff = (ForecastFragment) getSupportFragmentManager()
