@@ -9,9 +9,9 @@
     <string name="title_action_map">Find at GMaps</string>
 
     <!-- Some Keys _____________________________________________________________________________ -->
-    <string name="detail_fragment_key">NUEVA_ACTIVIDAD</string>
-    <string name="share_key">SHARE_ACTION</string>
-    <string name="api_key">cbcf4d7b9f98970213d72a3b20d02e09</string>
+    <string name="detail_fragment_key" translatable="false">DETAIL_FRAGMENT</string>
+    <string name="share_key" translatable="false">SHARE_ACTION</string>
+    <string name="api_key" translatable="false">cbcf4d7b9f98970213d72a3b20d02e09</string>
 
     <!-- Location Preferences __________________________________________________________________ -->
     <string name="pref_location_key" translatable="false">LOCATION_KEY</string>
@@ -34,7 +34,7 @@
     <string name="tomorrow" translatable="true">Tomorrow</string>
 
     <!-- Date format for displaying day of week and date (i.e. Mon Jun 1) [CHAR LIMIT=20] -->
-    <string name="format_full_friendly_date">
+    <string name="format_full_friendly_date" translatable="false">
         <xliff:g id="day">%1$s</xliff:g>,
         <xliff:g id="date">%2$s</xliff:g>
     </string>
@@ -61,14 +61,14 @@
 
     <!-- Account type (for sync-adapter authenticator) -->
     <!-- SyncAdapter related -->
-    <string name="sync_account_type">sunshine.japps.com</string>
-    <string name="content_authority">japps.sunshine_version_julio</string>
+    <string name="sync_account_type" translatable="false">sunshine.japps.com</string>
+    <string name="content_authority" translatable="false">japps.sunshine_version_julio</string>
     <!-- Notification Format -->
     <string name="format_notification">
         Forecast: <xliff:g id="condition">%1$s</xliff:g> High: <xliff:g id="high">%2$s</xliff:g> Low: <xliff:g id="low">%3$s</xliff:g>
     </string>
     <!-- Strings related to Notification preference -->
-    <string name="pref_last_notification">last_notification
+    <string name="pref_last_notification" translatable="false">last_notification
     </string>
 
     <!-- Strings related to Notification Enabled preference -->
