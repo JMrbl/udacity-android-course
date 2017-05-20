@@ -1,6 +1,6 @@
 <resources xmlns:xliff="http://schemas.android.com/tools">
     <!-- App name ______________________________________________________________________________ -->
-    <string name="app_name">Sunshine by JMrbl</string>
+    <string name="app_name">Sunshine</string>
     <!-- Label names ___________________________________________________________________________ -->
     <string name="title_detail_activity">Details</string>
     <string name="title_action_settings">Options</string>
