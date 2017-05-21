@@ -19,13 +19,18 @@
  */
 package japps.sunshine_version_julio.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.v4.net.ConnectivityManagerCompat;
 import android.text.format.Time;
+import android.view.Window;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -360,5 +365,17 @@ public class Utility {
         String firstLetter = Character.toString(word.charAt(0));
         String firstLetterUpper = Character.toString(word.charAt(0)).toUpperCase();
         return word.replaceFirst(firstLetter, firstLetterUpper);
+    }
+
+    public static boolean isTablet (Context context){
+        if (context != null){
+            return context.getResources().getBoolean(R.bool.isTablet);
+        }
+        return false;
+    }
+
+    public static boolean isNetworkAvailable(Context context){
+        ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        return manager.getActiveNetworkInfo() != null && manager.getActiveNetworkInfo().isConnectedOrConnecting();
     }
 }

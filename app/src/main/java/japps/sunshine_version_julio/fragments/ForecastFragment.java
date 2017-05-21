@@ -27,7 +27,6 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import japps.sunshine_version_julio.R;
-import japps.sunshine_version_julio.activities.MainActivity;
 import japps.sunshine_version_julio.adapters.ForecastAdapter;
 import japps.sunshine_version_julio.data.WeatherContract;
 import japps.sunshine_version_julio.sync.SunshineSyncAdapter;
@@ -39,6 +38,8 @@ import japps.sunshine_version_julio.utils.Utility;
  * Created by Julio on 21/10/2015.
  */
 public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+
+    private TextView mEmptyView;
 
     /**
      * A callback interface that all activities containing this fragment must
@@ -219,8 +220,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         mAdapter.setUseTodayLayout(mUseTodayLayout);
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         mListView = (ListView) rootView.findViewById(R.id.listview_forecast);
-        TextView emptyView = (TextView) rootView.findViewById(R.id.listview_forecast_empty);
-        mListView.setEmptyView(emptyView);
+        mEmptyView = (TextView) rootView.findViewById(R.id.listview_forecast_empty);
+        mListView.setEmptyView(mEmptyView);
         mListView.setAdapter(mAdapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -254,13 +255,17 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mAdapter.swapCursor(data);
-        if (((MainActivity) mContext).isTwoPane() && mPosition != ListView.INVALID_POSITION) {
-            mListView.smoothScrollToPosition(mPosition);
-            if (!mSavedState) {
-                LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(CURSOR_LOADER_FINISH_TABLET_KEY));
+        if (data.moveToFirst()) {
+            if (Utility.isTablet(mContext) && mPosition != ListView.INVALID_POSITION) {
+                mListView.smoothScrollToPosition(mPosition);
+                if (!mSavedState) {
+                    LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(CURSOR_LOADER_FINISH_TABLET_KEY));
+                }
+            } else if (!Utility.isTablet(mContext)) {
+                LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(CURSOR_LOADER_FINISH_KEY));
             }
-        } else if (!((MainActivity) mContext).isTwoPane()) {
-            LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(CURSOR_LOADER_FINISH_KEY));
+        } else if (!Utility.isNetworkAvailable(mContext)) {
+            mEmptyView.setText(R.string.no_network);
         }
     }
 
