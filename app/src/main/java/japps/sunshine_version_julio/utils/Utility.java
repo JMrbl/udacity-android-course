@@ -39,6 +39,7 @@ import java.util.Date;
 
 import japps.sunshine_version_julio.R;
 import japps.sunshine_version_julio.fragments.ForecastFragment;
+import japps.sunshine_version_julio.sync.SunshineSyncAdapter;
 
 public class Utility {
 
@@ -377,5 +378,10 @@ public class Utility {
     public static boolean isNetworkAvailable(Context context){
         ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         return manager.getActiveNetworkInfo() != null && manager.getActiveNetworkInfo().isConnectedOrConnecting();
+    }
+
+    public static int getLocationStatus(Context context){
+        return PreferenceManager.getDefaultSharedPreferences(context).getInt(
+                context.getString(R.string.pref_location_status_key), SunshineSyncAdapter.LOCATION_STATUS_UNKNOWN);
     }
 }

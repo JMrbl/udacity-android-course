@@ -19,6 +19,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.IntDef;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.LocalBroadcastManager;
@@ -32,6 +33,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Calendar;
@@ -49,9 +52,10 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
     private static Context mContext;
     public static final String SYNC_START_KEY = "SYNC_ADAPTER_START";
     public static final String SYNC_FINISH_KEY = "SYNC_ADAPTER_FINISH";
+    public static final String LAST_SYNC_STATE_KEY = "LAST_SYNC_STATE";
     // Interval at which to sync with the weather, in milliseconds.
     // 60 seconds (1 minute)  180 = 3 hours
-    public static final int SYNC_INTERVAL = 60 * 180;
+    public static final int SYNC_INTERVAL = 60 * 2;
     public static final int SYNC_FLEXTIME = SYNC_INTERVAL / 3;
     private static final String[] NOTIFY_WEATHER_PROJECTION = new String[]{
             WeatherContract.WeatherEntry.COLUMN_WEATHER_ID,
@@ -67,6 +71,14 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
     private static final long DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
     private static final int WEATHER_NOTIFICATION_ID = 3004;
 
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({LOCATION_STATUS_OK, LOCATION_STATUS_SERVER_DOWN, LOCATION_STATUS_SERVER_INVALID,  LOCATION_STATUS_UNKNOWN})
+    public @interface LocationStatus {}
+    public static final int LOCATION_STATUS_OK = 0;
+    public static final int LOCATION_STATUS_SERVER_DOWN = 1;
+    public static final int LOCATION_STATUS_SERVER_INVALID = 2;
+    public static final int LOCATION_STATUS_UNKNOWN = 3;
+
     public SunshineSyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
         mContext = mContext == null ? context : mContext;
@@ -74,7 +86,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
 
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
-        Log.d(LOG_TAG, "Sync data...");
+        Log.d(LOG_TAG, "Syncing data...");
         LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(SYNC_START_KEY));
         requestWeatherData();
     }
@@ -289,10 +301,8 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             forecastJsonStr = buffer.toString();
             try {
                 getWeatherDataFromJson(forecastJsonStr, city);
-//                JSONObject jsonObject = new JSONObject(forecastJsonStr);
-//                String jsonParsed = jsonObject.toString(4);
-//                Log.d("JSON WEATHER OUTPUT", jsonParsed);
             } catch (JSONException jsonEx) {
+                setLocationStatus(getContext(), LOCATION_STATUS_SERVER_DOWN);
                 Log.e(LOG_TAG, "JSON_Error ", jsonEx);
             }
 
@@ -300,6 +310,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
         } catch (IOException e) {
             // If the code didn't successfully get the weather data, there's no point in attemping
             // to parse it.
+            setLocationStatus(getContext(), LOCATION_STATUS_SERVER_INVALID);
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
         } finally {
@@ -448,13 +459,22 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                 }
                 LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(SYNC_FINISH_KEY));
             }
-
+            setLocationStatus(getContext(), LOCATION_STATUS_OK);
             Log.d(LOG_TAG, "FetchWeatherTask from service Complete. " + inserted + " Inserted");
 
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
+            setLocationStatus(getContext(), LOCATION_STATUS_SERVER_INVALID);
+            LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(SYNC_FINISH_KEY));
             e.printStackTrace();
         }
+    }
+
+    private void setLocationStatus(Context context, int locationStatus) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor spe = sp.edit();
+        spe.putInt(context.getString(R.string.pref_location_status_key), locationStatus);
+        spe.apply();
     }
 
     public long addLocation(String locationSetting, String cityName, double lat, double lon) {

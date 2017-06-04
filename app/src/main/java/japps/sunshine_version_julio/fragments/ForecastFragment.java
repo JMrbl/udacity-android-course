@@ -2,9 +2,11 @@ package japps.sunshine_version_julio.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -37,7 +39,7 @@ import japps.sunshine_version_julio.utils.Utility;
 /**
  * Created by Julio on 21/10/2015.
  */
-public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, SharedPreferences.OnSharedPreferenceChangeListener {
 
     private TextView mEmptyView;
 
@@ -107,6 +109,20 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     public void onStart() {
         super.onStart();
         //setCityTimeTextView();
+    }
+
+    @Override
+    public void onResume() {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        sp.registerOnSharedPreferenceChangeListener(this);
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        sp.unregisterOnSharedPreferenceChangeListener(this);
+        super.onPause();
     }
 
     @Override
@@ -264,8 +280,38 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             } else if (!Utility.isTablet(mContext)) {
                 LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(CURSOR_LOADER_FINISH_KEY));
             }
-        } else if (!Utility.isNetworkAvailable(mContext)) {
-            mEmptyView.setText(R.string.no_network);
+        }
+    }
+
+    private void updateEmptyView() {
+        if ( mAdapter.getCount() == 0 ) {
+            TextView tv = (TextView) getView().findViewById(R.id.listview_forecast_empty);
+            if ( null != tv ) {
+                // if cursor is empty, why? do we have an invalid location
+                int message = R.string.no_weather;
+                @SunshineSyncAdapter.LocationStatus int location = Utility.getLocationStatus(getActivity());
+                switch (location) {
+                    case SunshineSyncAdapter.LOCATION_STATUS_SERVER_DOWN:
+                        message = R.string.empty_forecast_list_server_down;
+                        break;
+                    case SunshineSyncAdapter.LOCATION_STATUS_SERVER_INVALID:
+                        message = R.string.empty_forecast_list_server_error;
+                        break;
+                    default:
+                        if (!Utility.isNetworkAvailable(getActivity()) ) {
+                            message = R.string.no_network;
+                        }
+                }
+                tv.setText(message);
+            }
+        }
+        LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(CURSOR_LOADER_FINISH_KEY));
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if ( key.equals(getString(R.string.pref_location_status_key)) ) {
+            updateEmptyView();
         }
     }
 
