@@ -384,4 +384,10 @@ public class Utility {
         return PreferenceManager.getDefaultSharedPreferences(context).getInt(
                 context.getString(R.string.pref_location_status_key), SunshineSyncAdapter.LOCATION_STATUS_UNKNOWN);
     }
+
+    public static void resetLocationStatus(Context context){
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putInt(
+                context.getString(R.string.pref_location_status_key), SunshineSyncAdapter.LOCATION_STATUS_UNKNOWN
+        ).apply();
+    }
 }

@@ -28,4 +28,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:design:25.3.1'
     compile 'com.android.support:support-annotations:26.0.0-alpha1'
+    compile 'com.squareup.retrofit2:retrofit:2.3.0'
+    compile 'com.google.code.gson:gson:2.8.1'
+    compile 'com.squareup.retrofit2:converter-scalars:2.1.0'
 }

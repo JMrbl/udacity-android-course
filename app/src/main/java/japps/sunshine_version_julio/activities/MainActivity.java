@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
             switch (key){
                 case SunshineSyncAdapter.SYNC_START_KEY:{
                     if (mProgressBar != null){
+                        mForecastFragment.destroyLoader();
                         mProgressBar.setVisibility(ProgressBar.VISIBLE);
                     }
                     break;

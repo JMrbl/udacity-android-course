@@ -10,6 +10,8 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 
 import japps.sunshine_version_julio.R;
+import japps.sunshine_version_julio.sync.SunshineSyncAdapter;
+import japps.sunshine_version_julio.utils.Utility;
 
 /**
  * Created by Julio on 13/12/2015.
@@ -46,10 +48,7 @@ public class SettingsActivity extends PreferenceActivity
     @Override
     public boolean onPreferenceChange(Preference preference, Object value) {
         String stringValue = value.toString();
-//        CharSequence locationSet = preference.getSummary();
-//        if (locationSet != null && !locationSet.toString().equals(stringValue)){
-//            SunshineSyncAdapter.syncImmediately(getApplicationContext());
-//        }
+        Utility.resetLocationStatus(this);
         if (preference instanceof ListPreference) {
             // For list preferences, look up the correct display value in
             // the preference's 'entries' list (since they have separate labels/values).

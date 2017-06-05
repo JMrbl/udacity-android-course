@@ -169,6 +169,10 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         getLoaderManager().restartLoader(FORECAST_LOADER_ID, null, this);
     }
 
+    public void destroyLoader() {
+        getLoaderManager().destroyLoader(FORECAST_LOADER_ID);
+    }
+
     public void setCityTimeTextView() {
         if (getView() != null) {
             TextView textView = (TextView) getView().findViewById(R.id.cityName_TextView);
@@ -271,25 +275,23 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mAdapter.swapCursor(data);
-        if (data.moveToFirst()) {
-            if (Utility.isTablet(mContext) && mPosition != ListView.INVALID_POSITION) {
-                mListView.smoothScrollToPosition(mPosition);
-                if (!mSavedState) {
-                    LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(CURSOR_LOADER_FINISH_TABLET_KEY));
-                }
-            } else if (!Utility.isTablet(mContext)) {
-                LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(CURSOR_LOADER_FINISH_KEY));
+        if (Utility.isTablet(mContext) && mPosition != ListView.INVALID_POSITION) {
+            mListView.smoothScrollToPosition(mPosition);
+            if (!mSavedState) {
+                LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(CURSOR_LOADER_FINISH_TABLET_KEY));
             }
+        } else if (!Utility.isTablet(mContext)) {
+            LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(CURSOR_LOADER_FINISH_KEY));
         }
     }
 
     private void updateEmptyView() {
-        if ( mAdapter.getCount() == 0 ) {
+        @SunshineSyncAdapter.LocationStatus int location = Utility.getLocationStatus(getActivity());
+        if (location != SunshineSyncAdapter.LOCATION_STATUS_OK && mAdapter.getCount() == 0) {
             TextView tv = (TextView) getView().findViewById(R.id.listview_forecast_empty);
-            if ( null != tv ) {
+            if (null != tv) {
                 // if cursor is empty, why? do we have an invalid location
                 int message = R.string.no_weather;
-                @SunshineSyncAdapter.LocationStatus int location = Utility.getLocationStatus(getActivity());
                 switch (location) {
                     case SunshineSyncAdapter.LOCATION_STATUS_SERVER_DOWN:
                         message = R.string.empty_forecast_list_server_down;
@@ -297,20 +299,22 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                     case SunshineSyncAdapter.LOCATION_STATUS_SERVER_INVALID:
                         message = R.string.empty_forecast_list_server_error;
                         break;
+                    case SunshineSyncAdapter.LOCATION_STATUS_INVALID:
+                        message = R.string.empty_forecast_list_invalid_location;
                     default:
-                        if (!Utility.isNetworkAvailable(getActivity()) ) {
+                        if (!Utility.isNetworkAvailable(getActivity())) {
                             message = R.string.no_network;
                         }
                 }
                 tv.setText(message);
+                LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(CURSOR_LOADER_FINISH_KEY));
             }
         }
-        LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(CURSOR_LOADER_FINISH_KEY));
     }
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if ( key.equals(getString(R.string.pref_location_status_key)) ) {
+        if (key.equals(getString(R.string.pref_location_status_key))) {
             updateEmptyView();
         }
     }
