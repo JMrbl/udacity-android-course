@@ -6,12 +6,20 @@ package japps.sunshine_version_julio.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
+import android.support.annotation.Nullable;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
 import japps.sunshine_version_julio.R;
 import japps.sunshine_version_julio.fragments.ForecastFragment;
@@ -79,20 +87,38 @@ public class ForecastAdapter extends CursorAdapter {
 
         int viewType = getItemViewType(cursor.getPosition());
         int weatherId = cursor.getInt(ForecastFragment.COL_WEATHER_CONDITION_ID);
-        ViewHolder holder = (ViewHolder) view.getTag();
-
+        final ViewHolder holder = (ViewHolder) view.getTag();
+        int fallbackIconId = Utility.getIconResourceForWeatherCondition(weatherId);
         switch (viewType){
             case VIEW_TYPE_TODAY: {
                 // Set forecast icon
-                holder.iconView.setImageResource(Utility.getArtResourceForWeatherCondition(weatherId));
+                fallbackIconId = Utility.getArtResourceForWeatherCondition(weatherId);
                 holder.cityView.setText(Utility.capitalize(Utility.getPreferredCity(mContext)));
                 break;
             }
             case VIEW_TYPE_FUTURE_DAY: {
-                holder.iconView.setImageResource(Utility.getIconResourceForWeatherCondition(weatherId));
+                fallbackIconId = Utility.getIconResourceForWeatherCondition(weatherId);
                 break;
             }
         }
+
+        final int finalFallbackIconId = fallbackIconId;
+        Glide.with(mContext)
+                .load(Utility.getArtUrlForWeatherCondition(mContext, weatherId))
+                .listener(new RequestListener<Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        holder.iconView.setImageResource(finalFallbackIconId);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        return false;
+                    }
+                })
+                .into(holder.iconView);
+
         // Set date from cursor
         long dateMillis = cursor.getLong(ForecastFragment.COL_WEATHER_DATE);
         holder.dateView.setText(Utility.getFriendlyDayString(context,dateMillis));

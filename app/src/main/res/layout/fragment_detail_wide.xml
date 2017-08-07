@@ -109,7 +109,8 @@
                 android:id="@+id/detail_forecast_icon"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                android:layout_gravity="right" />
+                android:layout_gravity="right"
+                android:adjustViewBounds="true"/>
 
             <TextView
                 android:fontFamily="sans-serif-condensed"

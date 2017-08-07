@@ -4,75 +4,79 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center_vertical"
-    android:orientation="horizontal"
     android:background="@color/colorPrimary"
+    android:orientation="horizontal"
+    android:paddingBottom="10dp"
     android:paddingLeft="40dp"
-    android:paddingRight="10dp"
-    android:paddingBottom="10dp">
+    android:paddingRight="10dp">
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         android:layout_weight="2"
         android:gravity="center"
+        android:orientation="vertical"
         android:paddingTop="13dp">
 
         <TextView
             android:id="@+id/list_item_date_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="22sp"
             android:fontFamily="sans-serif-condensed"
-            tools:targetApi="jelly_bean"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"
+            android:textSize="22sp"
+            tools:targetApi="jelly_bean" />
 
         <TextView
             android:id="@+id/list_item_high_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="72sp"
             android:fontFamily="sans-serif-light"
-            tools:targetApi="jelly_bean"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"
+            android:textSize="72sp"
+            tools:targetApi="jelly_bean" />
 
         <TextView
             android:id="@+id/list_item_low_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="36sp"
             android:fontFamily="sans-serif-light"
-            tools:targetApi="jelly_bean"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"
+            android:textSize="36sp"
+            tools:targetApi="jelly_bean" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:orientation="vertical"
+        android:layout_gravity="center_vertical"
         android:layout_weight="1"
         android:gravity="center"
-        android:layout_gravity="center_vertical">
+        android:orientation="vertical">
+
         <TextView
+            android:id="@+id/cityName_TextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="22sp"
-            android:id="@+id/cityName_TextView"
+            android:fontFamily="sans-serif-condensed"
             android:textColor="@color/white"
-            android:fontFamily="sans-serif-condensed" />
+            android:textSize="22sp" />
+
         <ImageView
             android:id="@+id/list_item_icon"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
             android:gravity="center_vertical" />
+
         <TextView
             android:id="@+id/list_item_forecast_textview"
             android:layout_width="160dp"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical|center_horizontal"
-            android:textSize="22sp"
             android:fontFamily="sans-serif-condensed"
+            android:gravity="center_vertical|center_horizontal"
+            android:textColor="@color/white"
             android:textIsSelectable="false"
-            android:textColor="@color/white" />
+            android:textSize="22sp" />
     </LinearLayout>
 </LinearLayout>
