@@ -28,6 +28,7 @@ public class SettingsActivity extends PreferenceActivity
         addPreferencesFromResource(R.xml.pref_general);
         bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_location_key)));
         bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_tempUnit_key)));
+        bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_art_pack_key)));
     }
 
     /**
@@ -72,7 +73,7 @@ public class SettingsActivity extends PreferenceActivity
                 default:
                     preference.setSummary(stringValue);
             }
-        }else {
+        } else {
             preference.setSummary(stringValue);
         }
         return true;
@@ -82,14 +83,16 @@ public class SettingsActivity extends PreferenceActivity
     // start our synchronization here
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if ( key.equals(getString(R.string.pref_location_key)) ) {
+        if (key.equals(getString(R.string.pref_location_key))) {
             Utility.resetLocationStatus(this);
             SunshineSyncAdapter.syncImmediately(this);
-        } else if ( key.equals(getString(R.string.pref_tempUnit_key)) ) {
+        } else if (key.equals(getString(R.string.pref_tempUnit_key))) {
             getContentResolver().notifyChange(WeatherContract.WeatherEntry.CONTENT_URI, null);
-        } else if ( key.equals(getString(R.string.pref_location_status_key)) ) {
+        } else if (key.equals(getString(R.string.pref_location_status_key))) {
             Preference locationPreference = findPreference(getString(R.string.pref_location_key));
             bindPreferenceSummaryToValue(locationPreference);
+        } else if (key.equals(getString(R.string.pref_art_pack_key))) {
+            getContentResolver().notifyChange(WeatherContract.WeatherEntry.CONTENT_URI, null);
         }
     }
 
